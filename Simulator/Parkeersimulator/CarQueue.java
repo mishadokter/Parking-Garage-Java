@@ -1,4 +1,5 @@
 package Parkeersimulator;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -13,7 +14,7 @@ public class CarQueue {
         return queue.poll();
     }
 
-    public int carsInQueue(){
-    	return queue.size();
+    public int carsInQueue() {
+        return queue.size();
     }
 }
