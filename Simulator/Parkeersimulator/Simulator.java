@@ -28,13 +28,17 @@ public class Simulator {
         entrancePassQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
-        simulatorView = new SimulatorView(3, 6, 30);
+        simulatorView = new SimulatorView(3, 6, 30, this);
+
     }
 
-    public void run() {
-        for (int i = 0; i < 10000; i++) {
-            tick();
-        }
+    public void stepOne() {
+        tick();
+    }
+
+    public void stepHundred() {
+        SimThread simThread = new SimThread(this);
+        simThread.start();
     }
 
     private void tick() {

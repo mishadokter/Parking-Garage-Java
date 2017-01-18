@@ -2,26 +2,42 @@ package Parkeersimulator;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class SimulatorView extends JFrame {
+public class SimulatorView extends JFrame implements ActionListener {
     private CarParkView carParkView;
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
     private int numberOfOpenSpots;
+    private Simulator simulator;
     private Car[][][] cars;
 
-    public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces) {
+    private JButton stepOne;
+    private JButton stepHundred;
+
+    public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces, Simulator simulator) {
         this.numberOfFloors = numberOfFloors;
         this.numberOfRows = numberOfRows;
         this.numberOfPlaces = numberOfPlaces;
         this.numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
+        this.simulator = simulator;
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
-
+        stepOne = new JButton("+1");
+        stepOne.addActionListener(this);
+        stepHundred = new JButton("+100");
+        stepHundred.addActionListener(this);
         carParkView = new CarParkView();
 
         Container contentPane = getContentPane();
         contentPane.add(carParkView, BorderLayout.CENTER);
+        carParkView.setLayout(null);
+        carParkView.add(stepOne);
+        carParkView.add(stepHundred);
+        stepOne.setBounds(50, 10, 70, 30);
+        stepHundred.setBounds(140, 10, 70, 30);
         pack();
         setVisible(true);
 
@@ -136,6 +152,24 @@ public class SimulatorView extends JFrame {
         return true;
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == stepOne) {
+            try {
+                simulator.stepOne();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        if (e.getSource() == stepHundred) {
+            try {
+                simulator.stepHundred();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
     private class CarParkView extends JPanel {
 
         private Dimension size;
@@ -205,5 +239,4 @@ public class SimulatorView extends JFrame {
                     10 - 1); // TODO use dynamic size or constants
         }
     }
-
 }
