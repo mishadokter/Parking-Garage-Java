@@ -1,23 +1,24 @@
 package parkeersimulator.view;
 
 import javax.swing.JPanel;
-import parkeersimulator.logic.Model
 
-public class AbstractView  extends JPanel {
+import parkeersimulator.logic.AbstractModel;
+import parkeersimulator.logic.CarParkModel;
 
-    protected Model model;
+public class AbstractView extends JPanel {
 
-    public AbstractView(Model model) {
+    protected CarParkModel model;
+
+    public AbstractView(CarParkModel model) {
         this.model = model;
         model.addView(this);
     }
 
-    public getModel() {
+    public AbstractModel getModel() {
         return this.model;
     }
 
     public void updateView() {
-        this.updateView();
-        this.repaint();
+        repaint();
     }
 }

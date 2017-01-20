@@ -1,8 +1,10 @@
 package parkeersimulator.logic;
 
 import parkeersimulator.objects.*;
+import parkeersimulator.view.AbstractView;
 
 
+import javax.swing.*;
 import java.util.Random;
 
 public class CarParkModel extends AbstractModel implements Runnable {
@@ -20,7 +22,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private CarQueue entrancePassQueue;
     private CarQueue paymentCarQueue;
     private CarQueue exitCarQueue;
-    private SimulatorView simulatorView;
     private int day = 0;
     private int hour = 0;
     private int minute = 0;
@@ -34,13 +35,23 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private int numberOfRows;
     private int numberOfPlaces;
     private int numberOfOpenSpots;
+    private Car[][][] cars;
+    private AbstractView abstractView;
 
-    public Model() {
+    public CarParkModel(int numberOfFloors, int numberOfRows, int numberOfPlaces) {
         entranceCarQueue = new CarQueue();
         entrancePassQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
-        simulatorView = new SimulatorView(3, 6, 30, this);
+        setNumberOfOpenSpots();
+        this.numberOfFloors = numberOfFloors;
+        this.numberOfRows = numberOfRows;
+        this.numberOfPlaces = numberOfPlaces;
+        run = false;
+        this.numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
+        cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
+        updateViews();
+
     }
 
     public void start(int numberOfSteps) {
@@ -104,9 +115,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
     }
 
     private void updateViews() {
-        simulatorView.tick();
-        // Update the car park view.
-        simulatorView.updateView();
+        viewTick();
+        notifyViews();
     }
 
     private void carsArriving() {
@@ -120,18 +130,18 @@ public class CarParkModel extends AbstractModel implements Runnable {
         int i = 0;
         // Remove car from the front of the queue and assign to a parking space.
         while (queue.carsInQueue() > 0 &&
-                simulatorView.getNumberOfOpenSpots() > 0 &&
+                getNumberOfOpenSpots() > 0 &&
                 i < enterSpeed) {
             Car car = queue.removeCar();
-            Location freeLocation = simulatorView.getFirstFreeLocation(car);
-            simulatorView.setCarAt(freeLocation, car);
+            Location freeLocation = getFirstFreeLocation(car);
+            setCarAt(freeLocation, car);
             i++;
         }
     }
 
     private void carsReadyToLeave() {
         // Add leaving cars to the payment queue.
-        Car car = simulatorView.getFirstLeavingCar();
+        Car car = getFirstLeavingCar();
         while (car != null) {
             if (car.getHasToPay()) {
                 car.setIsPaying(true);
@@ -139,7 +149,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
             } else {
                 carLeavesSpot(car);
             }
-            car = simulatorView.getFirstLeavingCar();
+            car = getFirstLeavingCar();
         }
     }
 
@@ -194,17 +204,13 @@ public class CarParkModel extends AbstractModel implements Runnable {
     }
 
     private void carLeavesSpot(Car car) {
-        simulatorView.removeCarAt(car.getLocation());
+        removeCarAt(car.getLocation());
         exitCarQueue.addCar(car);
     }
 
     // Methods from SimulatorView
 
-    public void updateView() {
-        carParkView.updateView();
-    }
-
-    private void setNumberOfOpenSpots() {
+    private int setNumberOfOpenSpots() {
         return numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
     }
 
@@ -236,15 +242,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
             return false;
         }
         Car oldCar = getCarAt(location);
-        if (car instanceof ParkingPassCar) {
-            if (oldCar instanceof ReservationCar) {
-                removeCarAt(location);
-                cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
-                car.setLocation(location);
-                numberOfOpenSpots--;
-                return true;
-            }
-        }
         if (oldCar == null) {
             cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
             car.setLocation(location);
@@ -266,7 +263,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
         if (location.getFloor() == 0 && location.getRow() == 0 && location.getPlace() >= 0 && location.getPlace() < 30) {
             cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
             car.setLocation(null);
-            setCarAt(location, new ReservationCar());
             return car;
         }
         car.setLocation(null);
@@ -279,11 +275,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
             for (int row = 0; row < getNumberOfRows(); row++) {
                 for (int place = 0; place < getNumberOfPlaces(); place++) {
                     Location location = new Location(floor, row, place);
-                    if (car instanceof ParkingPassCar) {
-                        if (getCarAt(location) instanceof ReservationCar || getCarAt(location) == null) {
-                            return location;
-                        }
-                    } else if (getCarAt(location) == null) {
+                    if (getCarAt(location) == null) {
                         return location;
                     }
                 }
@@ -307,7 +299,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return null;
     }
 
-    public void tick() {
+    public void viewTick() {
         for (int floor = 0; floor < getNumberOfFloors(); floor++) {
             for (int row = 0; row < getNumberOfRows(); row++) {
                 for (int place = 0; place < getNumberOfPlaces(); place++) {
@@ -342,6 +334,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 e.printStackTrace();
             }
         }
+
         run = false;
         numOfSteps = 0;
     }

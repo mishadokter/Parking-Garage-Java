@@ -1,11 +1,11 @@
 package parkeersimulator.controller;
 
-import parkeersimulator.exception.CarParkException;
-import parkeersimulator.logic.Model;
+import parkeersimulator.logic.CarParkModel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class RunController extends AbstractController implements ActionListener {
 
@@ -13,8 +13,9 @@ public class RunController extends AbstractController implements ActionListener 
     private JButton stepHundred;
     private JButton startSteps;
     private JButton stopSteps;
+    private ArrayList<JButton> buttons;
 
-    public RunController(Model model) {
+    public RunController(CarParkModel model) {
         super(model);
         setSize(800, 500);
         stepOne = new JButton("Step one");
@@ -25,6 +26,11 @@ public class RunController extends AbstractController implements ActionListener 
         startSteps.addActionListener(this);
         stopSteps = new JButton("Stop");
         stopSteps.addActionListener(this);
+
+        buttons = new ArrayList<>();
+        buttons.add(stepOne);
+        buttons.add(stepHundred);
+        buttons.add(startSteps);
 
         this.setLayout(null);
         add(stepOne);
@@ -40,39 +46,57 @@ public class RunController extends AbstractController implements ActionListener 
 
     }
 
+    private void disableButtons() {
+        for (JButton button : buttons) {
+            button.setEnabled(false);
+        }
+    }
+
+    private void enableButtons() {
+        for (JButton button : buttons) {
+            button.setEnabled(true);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == stepOne) {
+            disableButtons();
             try {
                 model.start(1);
-            } catch (CarParkException ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
+                enableButtons();
             }
             return;
         }
 
         if (e.getSource() == stepHundred) {
+            disableButtons();
             try {
                 model.start(100);
-            } catch (CarParkException ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
+                enableButtons();
             }
             return;
         }
 
         if (e.getSource() == startSteps) {
+            disableButtons();
             try {
                 model.start(5000);
             } catch (Exception ex) {
                 ex.printStackTrace();
+                enableButtons();
             }
             return;
         }
 
         if (e.getSource() == stopSteps) {
             model.stopSteps();
+            enableButtons();
         }
 
     }
-}
 }

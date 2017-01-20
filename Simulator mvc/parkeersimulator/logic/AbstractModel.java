@@ -11,7 +11,7 @@ public abstract class AbstractModel {
 
 
     public AbstractModel() {
-        views = new ArrayList<AbstractView>();
+        views = new ArrayList<>();
     }
 
     public void addView(AbstractView view) {

@@ -17,10 +17,9 @@ public class SimulatorView extends JFrame implements ActionListener {
     private JButton stepOne;
     private JButton stepHundred;
 
+    private JButton lastClicked;
+
     public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces, Simulator simulator) {
-        this.numberOfFloors = numberOfFloors;
-        this.numberOfRows = numberOfRows;
-        this.numberOfPlaces = numberOfPlaces;
         this.numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
         this.simulator = simulator;
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -181,12 +180,19 @@ public class SimulatorView extends JFrame implements ActionListener {
             }
         }
         if (e.getSource() == stepHundred) {
+            lastClicked = stepHundred;
+            lastClicked.setEnabled(false);
             try {
                 simulator.stepHundred();
             } catch (Exception ex) {
                 ex.printStackTrace();
+                lastClicked.setEnabled(true);
             }
         }
+    }
+
+    public JButton getCurrentButton() {
+        return lastClicked;
     }
 
     private class CarParkView extends JPanel {

@@ -40,7 +40,7 @@ public class Simulator {
     }
 
     public void stepHundred() {
-        SimThread simThread = new SimThread(this);
+        SimThread simThread = new SimThread(this, simulatorView);
         simThread.start();
     }
 

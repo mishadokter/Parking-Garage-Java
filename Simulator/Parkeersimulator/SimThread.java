@@ -3,9 +3,11 @@ package Parkeersimulator;
 public class SimThread extends Thread {
 
     Simulator simulator;
+    SimulatorView view;
 
-    public SimThread(Simulator simulator) {
+    public SimThread(Simulator simulator, SimulatorView view) {
         this.simulator = simulator;
+        this.view = view;
     }
 
     @Override
@@ -18,5 +20,6 @@ public class SimThread extends Thread {
 
             }
         }
+        view.getCurrentButton().setEnabled(true);
     }
 }

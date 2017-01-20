@@ -1,9 +1,9 @@
 package parkeersimulator.controller;
 
-import parkeersimulator.logic.Model;
+import parkeersimulator.logic.CarParkModel;
 
 public class InitController extends AbstractController {
-    public InitController(Model model) {
+    public InitController(CarParkModel model) {
         super(model);
     }
 }

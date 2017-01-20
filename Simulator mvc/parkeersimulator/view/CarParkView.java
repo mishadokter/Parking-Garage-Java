@@ -1,12 +1,11 @@
 package parkeersimulator.view;
 
-/**
- * Created by sanderpost on 20-01-17.
- */
+import parkeersimulator.logic.CarParkModel;
+import parkeersimulator.objects.Car;
+import parkeersimulator.objects.Location;
 
 import javax.swing.*;
 import java.awt.*;
-import parkeersimulator.logic.*;
 
 public class CarParkView extends AbstractView {
 
@@ -16,9 +15,10 @@ public class CarParkView extends AbstractView {
     /**
      * Constructor for objects of class CarPark
      */
-    public CarParkView(Model model) {
+    public CarParkView(CarParkModel model) {
+
+        super(model);
         size = new Dimension(0, 0);
-        this.model = model;
     }
 
     /**
@@ -53,11 +53,11 @@ public class CarParkView extends AbstractView {
             carParkImage = createImage(size.width, size.height);
         }
         Graphics graphics = carParkImage.getGraphics();
-        for (int floor = 0; floor < getNumberOfFloors(); floor++) {
-            for (int row = 0; row < getNumberOfRows(); row++) {
-                for (int place = 0; place < getNumberOfPlaces(); place++) {
+        for (int floor = 0; floor < model.getNumberOfFloors(); floor++) {
+            for (int row = 0; row < model.getNumberOfRows(); row++) {
+                for (int place = 0; place < model.getNumberOfPlaces(); place++) {
                     Location location = new Location(floor, row, place);
-                    Car car = getCarAt(location);
+                    Car car = model.getCarAt(location);
                     Color color = car == null ? Color.white : car.getColor();
                     drawPlace(graphics, location, color);
                 }
