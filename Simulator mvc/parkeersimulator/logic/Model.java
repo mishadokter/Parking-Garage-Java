@@ -25,6 +25,9 @@ public class Model extends AbstractModel implements Runnable {
     private int minute = 0;
     private int tickPause = 100;
 
+    private int numOfSteps;
+    private boolean run;
+
     public Model() {
         entranceCarQueue = new CarQueue();
         entrancePassQueue = new CarQueue();
@@ -33,13 +36,14 @@ public class Model extends AbstractModel implements Runnable {
         simulatorView = new SimulatorView(3, 6, 30, this);
     }
 
-    public void stepOne() {
-        tick();
+    public void start(int numberOfSteps) {
+        numOfSteps = numberOfSteps;
+        run = true;
+        new Thread(this).start();
     }
 
-    public void stepHundred() {
-        SimThread simThread = new SimThread(this);
-        simThread.start();
+    public void stopSteps() {
+        run = false;
     }
 
     private void tick() {
@@ -72,13 +76,13 @@ public class Model extends AbstractModel implements Runnable {
 
     }
 
-    private void assignPassHolders() {
+    /*private void assignPassHolders() {
         for (int i = 0; i < PASS_HOLDERS_PLACES; i++) {
             Car car = new ReservationCar();
             Location freelocation = simulatorView.getFirstFreeLocation(car);
             simulatorView.setCarAt(freelocation, car);
         }
-    }
+    }*/
 
     private void handleEntrance() {
         carsArriving();
@@ -189,6 +193,16 @@ public class Model extends AbstractModel implements Runnable {
 
     @Override
     public void run() {
-
+        for (int i = 0; i < numOfSteps && run; i++) {
+            tick();
+            notifyViews();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        run = false;
+        numOfSteps = 0;
     }
 }
