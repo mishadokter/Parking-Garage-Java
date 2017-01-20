@@ -76,6 +76,15 @@ public class SimulatorView extends JFrame implements ActionListener {
             return false;
         }
         Car oldCar = getCarAt(location);
+        if (car instanceof ParkingPassCar) {
+            if (oldCar instanceof ReservationCar) {
+                removeCarAt(location);
+                cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
+                car.setLocation(location);
+                numberOfOpenSpots--;
+                return true;
+            }
+        }
         if (oldCar == null) {
             cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
             car.setLocation(location);
@@ -94,17 +103,27 @@ public class SimulatorView extends JFrame implements ActionListener {
             return null;
         }
         cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
+        if (location.getFloor() == 0 && location.getRow() == 0 && location.getPlace() >= 0 && location.getPlace() < 30) {
+            cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
+            car.setLocation(null);
+            setCarAt(location, new ReservationCar());
+            return car;
+        }
         car.setLocation(null);
         numberOfOpenSpots++;
         return car;
     }
 
-    public Location getFirstFreeLocation() {
+    public Location getFirstFreeLocation(Car car) {
         for (int floor = 0; floor < getNumberOfFloors(); floor++) {
             for (int row = 0; row < getNumberOfRows(); row++) {
                 for (int place = 0; place < getNumberOfPlaces(); place++) {
                     Location location = new Location(floor, row, place);
-                    if (getCarAt(location) == null) {
+                    if (car instanceof ParkingPassCar) {
+                        if (getCarAt(location) instanceof ReservationCar || getCarAt(location) == null) {
+                            return location;
+                        }
+                    } else if (getCarAt(location) == null) {
                         return location;
                     }
                 }

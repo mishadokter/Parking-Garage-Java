@@ -1,12 +1,11 @@
-package Parkeersimulator;
+package parkeersimulator.logic;
 
 import java.util.Random;
 
-public class Simulator {
+public class Model extends AbstractModel implements Runnable {
 
     private static final String AD_HOC = "1";
     private static final String PASS = "2";
-    private static final int PASS_HOLDERS_PLACES = 30;
     int weekDayArrivals = 100; // average number of arriving cars per hour
     int weekendArrivals = 200; // average number of arriving cars per hour
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
@@ -26,13 +25,12 @@ public class Simulator {
     private int minute = 0;
     private int tickPause = 100;
 
-    public Simulator() {
+    public Model() {
         entranceCarQueue = new CarQueue();
         entrancePassQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
         simulatorView = new SimulatorView(3, 6, 30, this);
-        assignPassHolders();
     }
 
     public void stepOne() {
@@ -189,4 +187,8 @@ public class Simulator {
         exitCarQueue.addCar(car);
     }
 
+    @Override
+    public void run() {
+
+    }
 }
