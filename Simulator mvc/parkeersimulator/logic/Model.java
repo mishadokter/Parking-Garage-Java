@@ -29,6 +29,12 @@ public class Model extends AbstractModel implements Runnable {
     private int numOfSteps;
     private boolean run;
 
+    // Fields from SimulatorView
+    private int numberOfFloors;
+    private int numberOfRows;
+    private int numberOfPlaces;
+    private int numberOfOpenSpots;
+
     public Model() {
         entranceCarQueue = new CarQueue();
         entrancePassQueue = new CarQueue();
@@ -190,6 +196,165 @@ public class Model extends AbstractModel implements Runnable {
     private void carLeavesSpot(Car car) {
         simulatorView.removeCarAt(car.getLocation());
         exitCarQueue.addCar(car);
+    }
+
+    // Methods from SimulatorView
+    public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces, Simulator simulator) {
+        this.numberOfFloors = numberOfFloors;
+        this.numberOfRows = numberOfRows;
+        this.numberOfPlaces = numberOfPlaces;
+        this.numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
+        this.simulator = simulator;
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
+        stepOne = new JButton("+1");
+        stepOne.addActionListener(this);
+        stepHundred = new JButton("+100");
+        stepHundred.addActionListener(this);
+        carParkView = new CarParkView();
+
+        Container contentPane = getContentPane();
+        contentPane.add(carParkView, BorderLayout.CENTER);
+        carParkView.setLayout(null);
+        carParkView.add(stepOne);
+        carParkView.add(stepHundred);
+        stepOne.setBounds(50, 10, 70, 30);
+        stepHundred.setBounds(140, 10, 70, 30);
+        pack();
+        setVisible(true);
+
+        updateView();
+    }
+
+    public void updateView() {
+        carParkView.updateView();
+    }
+
+    private void setNumberOfOpenSpots() {
+        return numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
+    }
+
+    public int getNumberOfFloors() {
+        return numberOfFloors;
+    }
+
+    public int getNumberOfRows() {
+        return numberOfRows;
+    }
+
+    public int getNumberOfPlaces() {
+        return numberOfPlaces;
+    }
+
+    public int getNumberOfOpenSpots() {
+        return numberOfOpenSpots;
+    }
+
+    public Car getCarAt(Location location) {
+        if (!locationIsValid(location)) {
+            return null;
+        }
+        return cars[location.getFloor()][location.getRow()][location.getPlace()];
+    }
+
+    public boolean setCarAt(Location location, Car car) {
+        if (!locationIsValid(location)) {
+            return false;
+        }
+        Car oldCar = getCarAt(location);
+        if (car instanceof ParkingPassCar) {
+            if (oldCar instanceof ReservationCar) {
+                removeCarAt(location);
+                cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
+                car.setLocation(location);
+                numberOfOpenSpots--;
+                return true;
+            }
+        }
+        if (oldCar == null) {
+            cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
+            car.setLocation(location);
+            numberOfOpenSpots--;
+            return true;
+        }
+        return false;
+    }
+
+    public Car removeCarAt(Location location) {
+        if (!locationIsValid(location)) {
+            return null;
+        }
+        Car car = getCarAt(location);
+        if (car == null) {
+            return null;
+        }
+        cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
+        if (location.getFloor() == 0 && location.getRow() == 0 && location.getPlace() >= 0 && location.getPlace() < 30) {
+            cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
+            car.setLocation(null);
+            setCarAt(location, new ReservationCar());
+            return car;
+        }
+        car.setLocation(null);
+        numberOfOpenSpots++;
+        return car;
+    }
+
+    public Location getFirstFreeLocation(Car car) {
+        for (int floor = 0; floor < getNumberOfFloors(); floor++) {
+            for (int row = 0; row < getNumberOfRows(); row++) {
+                for (int place = 0; place < getNumberOfPlaces(); place++) {
+                    Location location = new Location(floor, row, place);
+                    if (car instanceof ParkingPassCar) {
+                        if (getCarAt(location) instanceof ReservationCar || getCarAt(location) == null) {
+                            return location;
+                        }
+                    } else if (getCarAt(location) == null) {
+                        return location;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public Car getFirstLeavingCar() {
+        for (int floor = 0; floor < getNumberOfFloors(); floor++) {
+            for (int row = 0; row < getNumberOfRows(); row++) {
+                for (int place = 0; place < getNumberOfPlaces(); place++) {
+                    Location location = new Location(floor, row, place);
+                    Car car = getCarAt(location);
+                    if (car != null && car.getMinutesLeft() <= 0 && !car.getIsPaying()) {
+                        return car;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public void tick() {
+        for (int floor = 0; floor < getNumberOfFloors(); floor++) {
+            for (int row = 0; row < getNumberOfRows(); row++) {
+                for (int place = 0; place < getNumberOfPlaces(); place++) {
+                    Location location = new Location(floor, row, place);
+                    Car car = getCarAt(location);
+                    if (car != null) {
+                        car.tick();
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean locationIsValid(Location location) {
+        int floor = location.getFloor();
+        int row = location.getRow();
+        int place = location.getPlace();
+        if (floor < 0 || floor >= numberOfFloors || row < 0 || row > numberOfRows || place < 0 || place > numberOfPlaces) {
+            return false;
+        }
+        return true;
     }
 
     @Override
