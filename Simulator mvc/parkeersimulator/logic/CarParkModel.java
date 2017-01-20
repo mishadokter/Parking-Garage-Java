@@ -17,7 +17,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     int weekendArrivals = 200; // average number of arriving cars per hour
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
     int weekendPassArrivals = 5; // average number of arriving cars per hour
-    int numberOfPasses = 60;
+    int numberOfPasses = 68;
     int enterSpeed = 3; // number of cars that can enter per minute
     int paymentSpeed = 7; // number of cars that can pay per minute
     int exitSpeed = 5; // number of cars that can leave per minute
@@ -28,7 +28,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private int day = 0;
     private int hour = 0;
     private int minute = 0;
-    private int tickPause = 100;
+    private int tickPause = 20;
     private int steps = 0;
 
     private ArrayList<Location> spots;
@@ -43,7 +43,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private int numberOfPlaces;
     private int numberOfOpenSpots;
     private Car[][][] cars;
-    private AbstractView abstractView;
 
     public CarParkModel(int numberOfFloors, int numberOfRows, int numberOfPlaces) {
         entranceCarQueue = new CarQueue();
@@ -57,8 +56,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
         run = false;
         this.numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
         cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
-        updateViews();
-
         spots = new ArrayList<>();
         passHolders = new ArrayList<>();
         assignSpots();
@@ -268,7 +265,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 removeCarAt(location);
                 cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
                 car.setLocation(location);
-                numberOfOpenSpots--;
                 return true;
             }
         }
