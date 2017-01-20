@@ -11,6 +11,7 @@ public class CarParkView extends AbstractView {
 
     private Dimension size;
     private Image carParkImage;
+    private JLabel steps;
 
     /**
      * Constructor for objects of class CarPark
@@ -19,6 +20,9 @@ public class CarParkView extends AbstractView {
 
         super(model);
         size = new Dimension(0, 0);
+        steps = new JLabel();
+        add(steps);
+        steps.setBounds(410, 10, 70, 30);
     }
 
     /**
@@ -47,6 +51,7 @@ public class CarParkView extends AbstractView {
     }
 
     public void updateView() {
+        steps.setText(model.getSteps());
         // Create a new car park image if the size has changed.
         if (!size.equals(getSize())) {
             size = getSize();

@@ -5,6 +5,8 @@ import parkeersimulator.view.AbstractView;
 
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class CarParkModel extends AbstractModel implements Runnable {
@@ -15,6 +17,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     int weekendArrivals = 200; // average number of arriving cars per hour
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
     int weekendPassArrivals = 5; // average number of arriving cars per hour
+    int numberOfPasses = 60;
     int enterSpeed = 3; // number of cars that can enter per minute
     int paymentSpeed = 7; // number of cars that can pay per minute
     int exitSpeed = 5; // number of cars that can leave per minute
@@ -26,6 +29,10 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private int hour = 0;
     private int minute = 0;
     private int tickPause = 100;
+    private int steps = 0;
+
+    private ArrayList<Location> spots;
+    private ArrayList<Location> passHolders;
 
     private int numOfSteps;
     private boolean run;
@@ -52,6 +59,27 @@ public class CarParkModel extends AbstractModel implements Runnable {
         cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
         updateViews();
 
+        spots = new ArrayList<>();
+        passHolders = new ArrayList<>();
+        assignSpots();
+        setPassSpot();
+    }
+
+    public void assignSpots() {
+        for (int i = 0; i < numberOfFloors; i++) {
+            for (int j = 0; j < numberOfRows; j++) {
+                for (int k = 0; k < numberOfPlaces; k++) {
+                    spots.add(new Location(i, j, k));
+                }
+            }
+        }
+    }
+
+    private void setPassSpot() {
+        for (int i = 0; i < numberOfPasses; i++) {
+            setCarAt(spots.get(i), new ResCar());
+            passHolders.add(spots.get(i));
+        }
     }
 
     public void start(int numberOfSteps) {
@@ -75,6 +103,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
             e.printStackTrace();
         }
         handleEntrance();
+        steps++;
     }
 
     private void advanceTime() {
@@ -93,14 +122,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
 
     }
-
-    /*private void assignPassHolders() {
-        for (int i = 0; i < PASS_HOLDERS_PLACES; i++) {
-            Car car = new ReservationCar();
-            Location freelocation = simulatorView.getFirstFreeLocation(car);
-            simulatorView.setCarAt(freelocation, car);
-        }
-    }*/
 
     private void handleEntrance() {
         carsArriving();
@@ -242,6 +263,15 @@ public class CarParkModel extends AbstractModel implements Runnable {
             return false;
         }
         Car oldCar = getCarAt(location);
+        if (car instanceof ParkingPassCar) {
+            if (oldCar instanceof ResCar) {
+                removeCarAt(location);
+                cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
+                car.setLocation(location);
+                numberOfOpenSpots--;
+                return true;
+            }
+        }
         if (oldCar == null) {
             cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
             car.setLocation(location);
@@ -259,12 +289,20 @@ public class CarParkModel extends AbstractModel implements Runnable {
         if (car == null) {
             return null;
         }
-        cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
-        if (location.getFloor() == 0 && location.getRow() == 0 && location.getPlace() >= 0 && location.getPlace() < 30) {
+        boolean passHolder = false;
+        for (Location loc : passHolders) {
+            if (loc.equals(location)) {
+                passHolder = true;
+            }
+        }
+        if (passHolder) {
             cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
             car.setLocation(null);
+            setCarAt(location, new ResCar());
+            numberOfOpenSpots++;
             return car;
         }
+        cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
         car.setLocation(null);
         numberOfOpenSpots++;
         return car;
@@ -275,7 +313,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
             for (int row = 0; row < getNumberOfRows(); row++) {
                 for (int place = 0; place < getNumberOfPlaces(); place++) {
                     Location location = new Location(floor, row, place);
-                    if (getCarAt(location) == null) {
+                    if (car instanceof ParkingPassCar) {
+                        if (getCarAt(location) instanceof ResCar || getCarAt(location) == null) {
+                            return location;
+                        }
+                    } else if (getCarAt(location) == null) {
                         return location;
                     }
                 }
@@ -321,6 +363,10 @@ public class CarParkModel extends AbstractModel implements Runnable {
             return false;
         }
         return true;
+    }
+
+    public String getSteps() {
+        return Integer.toString(steps);
     }
 
     @Override

@@ -27,6 +27,7 @@ public class RunController extends AbstractController implements ActionListener 
         stopSteps = new JButton("Stop");
         stopSteps.addActionListener(this);
 
+
         buttons = new ArrayList<>();
         buttons.add(stepOne);
         buttons.add(stepHundred);
@@ -61,12 +62,10 @@ public class RunController extends AbstractController implements ActionListener 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == stepOne) {
-            disableButtons();
             try {
                 model.start(1);
             } catch (Exception ex) {
                 ex.printStackTrace();
-                enableButtons();
             }
             return;
         }
