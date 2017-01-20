@@ -1,5 +1,8 @@
 package parkeersimulator.logic;
 
+import parkeersimulator.objects.*;
+
+
 import java.util.Random;
 
 public class Model extends AbstractModel implements Runnable {
@@ -10,8 +13,6 @@ public class Model extends AbstractModel implements Runnable {
     int weekendArrivals = 200; // average number of arriving cars per hour
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
     int weekendPassArrivals = 5; // average number of arriving cars per hour
-    int weekDayRes = 50;
-    int weekendRes = 5;
     int enterSpeed = 3; // number of cars that can enter per minute
     int paymentSpeed = 7; // number of cars that can pay per minute
     int exitSpeed = 5; // number of cars that can leave per minute
@@ -25,6 +26,9 @@ public class Model extends AbstractModel implements Runnable {
     private int minute = 0;
     private int tickPause = 100;
 
+    private int numOfSteps;
+    private boolean run;
+
     public Model() {
         entranceCarQueue = new CarQueue();
         entrancePassQueue = new CarQueue();
@@ -33,13 +37,14 @@ public class Model extends AbstractModel implements Runnable {
         simulatorView = new SimulatorView(3, 6, 30, this);
     }
 
-    public void stepOne() {
-        tick();
+    public void start(int numberOfSteps) {
+        numOfSteps = numberOfSteps;
+        run = true;
+        new Thread(this).start();
     }
 
-    public void stepHundred() {
-        SimThread simThread = new SimThread(this);
-        simThread.start();
+    public void stopSteps() {
+        run = false;
     }
 
     private void tick() {
@@ -72,13 +77,13 @@ public class Model extends AbstractModel implements Runnable {
 
     }
 
-    private void assignPassHolders() {
+    /*private void assignPassHolders() {
         for (int i = 0; i < PASS_HOLDERS_PLACES; i++) {
             Car car = new ReservationCar();
             Location freelocation = simulatorView.getFirstFreeLocation(car);
             simulatorView.setCarAt(freelocation, car);
         }
-    }
+    }*/
 
     private void handleEntrance() {
         carsArriving();
@@ -189,6 +194,16 @@ public class Model extends AbstractModel implements Runnable {
 
     @Override
     public void run() {
-
+        for (int i = 0; i < numOfSteps && run; i++) {
+            tick();
+            notifyViews();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        run = false;
+        numOfSteps = 0;
     }
 }
