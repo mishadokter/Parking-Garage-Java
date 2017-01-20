@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import parkeersimulator.logic.*;
 
-private class CarParkView extends AbstractView {
+public class CarParkView extends AbstractView {
 
     private Dimension size;
     private Image carParkImage;
