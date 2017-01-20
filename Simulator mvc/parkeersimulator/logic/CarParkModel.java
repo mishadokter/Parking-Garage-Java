@@ -5,7 +5,7 @@ import parkeersimulator.objects.*;
 
 import java.util.Random;
 
-public class Model extends AbstractModel implements Runnable {
+public class CarParkModel extends AbstractModel implements Runnable {
 
     private static final String AD_HOC = "1";
     private static final String PASS = "2";
@@ -199,32 +199,6 @@ public class Model extends AbstractModel implements Runnable {
     }
 
     // Methods from SimulatorView
-    public SimulatorView(int numberOfFloors, int numberOfRows, int numberOfPlaces, Simulator simulator) {
-        this.numberOfFloors = numberOfFloors;
-        this.numberOfRows = numberOfRows;
-        this.numberOfPlaces = numberOfPlaces;
-        this.numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
-        this.simulator = simulator;
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
-        stepOne = new JButton("+1");
-        stepOne.addActionListener(this);
-        stepHundred = new JButton("+100");
-        stepHundred.addActionListener(this);
-        carParkView = new CarParkView();
-
-        Container contentPane = getContentPane();
-        contentPane.add(carParkView, BorderLayout.CENTER);
-        carParkView.setLayout(null);
-        carParkView.add(stepOne);
-        carParkView.add(stepHundred);
-        stepOne.setBounds(50, 10, 70, 30);
-        stepHundred.setBounds(140, 10, 70, 30);
-        pack();
-        setVisible(true);
-
-        updateView();
-    }
 
     public void updateView() {
         carParkView.updateView();
