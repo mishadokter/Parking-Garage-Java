@@ -1,13 +1,15 @@
 package parkeersimulator.main;
 
 import javax.swing.*;
+import java.awt.*;
 
 import parkeersimulator.controller.*;
 import parkeersimulator.logic.*;
 import parkeersimulator.view.*;
 
-import java.awt.*;
-
+/**
+ * This class creates all needed objects to start.
+ */
 public class CarParkSim {
 
     private JFrame screen;
@@ -15,6 +17,9 @@ public class CarParkSim {
     private CarParkModel carParkModel;
     private AbstractController runController;
 
+    /**
+     * The constructor
+     */
     public CarParkSim() {
         carParkModel = new CarParkModel(3, 6, 30);
         runController = new RunController(carParkModel);

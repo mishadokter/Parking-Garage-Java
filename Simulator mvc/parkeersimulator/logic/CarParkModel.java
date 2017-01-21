@@ -1,14 +1,13 @@
 package parkeersimulator.logic;
 
-import parkeersimulator.objects.*;
-import parkeersimulator.view.AbstractView;
-
-
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
+import parkeersimulator.objects.*;
+
+/**
+ * The main model initializing.
+ */
 public class CarParkModel extends AbstractModel implements Runnable {
 
     private static final String AD_HOC = "1";
@@ -44,6 +43,13 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private int numberOfOpenSpots;
     private Car[][][] cars;
 
+    /**
+     * Creates the car park.
+     *
+     * @param numberOfFloors The number of floors.
+     * @param numberOfRows   The number of rows on each floor.
+     * @param numberOfPlaces The number of places on each row.
+     */
     public CarParkModel(int numberOfFloors, int numberOfRows, int numberOfPlaces) {
         entranceCarQueue = new CarQueue();
         entrancePassQueue = new CarQueue();
@@ -62,6 +68,9 @@ public class CarParkModel extends AbstractModel implements Runnable {
         setPassSpot();
     }
 
+    /**
+     * This put all available places into a list.
+     */
     public void assignSpots() {
         for (int i = 0; i < numberOfFloors; i++) {
             for (int j = 0; j < numberOfRows; j++) {
@@ -72,6 +81,9 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
     }
 
+    /**
+     * This set places specially for pass holders.
+     */
     private void setPassSpot() {
         for (int i = 0; i < numberOfPasses; i++) {
             setCarAt(spots.get(i), new ResCar());
@@ -79,16 +91,27 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
     }
 
+    /**
+     * Starts the simulation.
+     *
+     * @param numberOfSteps The amount of steps the simulation has to run.
+     */
     public void start(int numberOfSteps) {
         numOfSteps = numberOfSteps;
         run = true;
         new Thread(this).start();
     }
 
+    /**
+     * Stops the simulation.
+     */
     public void stopSteps() {
         run = false;
     }
 
+    /**
+     * This methods stands for 1 step.
+     */
     private void tick() {
         advanceTime();
         handleExit();
@@ -103,6 +126,9 @@ public class CarParkModel extends AbstractModel implements Runnable {
         steps++;
     }
 
+    /**
+     * Counting like a clock starting from 00:00.
+     */
     private void advanceTime() {
         // Advance the time by one minute.
         minute++;
@@ -132,11 +158,17 @@ public class CarParkModel extends AbstractModel implements Runnable {
         carsLeaving();
     }
 
+    /**
+     * Update all views.
+     */
     private void updateViews() {
-        viewTick();
+        carTick();
         notifyViews();
     }
 
+    /**
+     * Add arriving cars to their correct queue.
+     */
     private void carsArriving() {
         int numberOfCars = getNumberOfCars(weekDayArrivals, weekendArrivals);
         addArrivingCars(numberOfCars, AD_HOC);
@@ -144,6 +176,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
         addArrivingCars(numberOfCars, PASS);
     }
 
+    /**
+     * Get a car from the queue, remove it from the queue and park at the right spot.
+     *
+     * @param queue The queue the car is in.
+     */
     private void carsEntering(CarQueue queue) {
         int i = 0;
         // Remove car from the front of the queue and assign to a parking space.
@@ -157,6 +194,9 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
     }
 
+    /**
+     * Removes the car from the parking spot and check wether he has to pay or not..
+     */
     private void carsReadyToLeave() {
         // Add leaving cars to the payment queue.
         Car car = getFirstLeavingCar();
@@ -171,6 +211,9 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
     }
 
+    /**
+     * Let the cars pay.
+     */
     private void carsPaying() {
         // Let cars pay.
         int i = 0;
@@ -182,6 +225,9 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
     }
 
+    /**
+     * Remove car from the exit queue.
+     */
     private void carsLeaving() {
         // Let cars leave.
         int i = 0;
@@ -191,6 +237,13 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
     }
 
+    /**
+     * Gets the number of cars that are entering.
+     *
+     * @param weekDay The average number of arrivals during the week.
+     * @param weekend The average number of arrivals during the weekend.
+     * @return The amount of cars entering per step/minute.
+     */
     private int getNumberOfCars(int weekDay, int weekend) {
         Random random = new Random();
 
@@ -205,6 +258,12 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return (int) Math.round(numberOfCarsPerHour / 60);
     }
 
+    /**
+     * Add the car to the right entrance queue.
+     *
+     * @param numberOfCars Number of cars entering per step/minute.
+     * @param type         The type of the car.
+     */
     private void addArrivingCars(int numberOfCars, String type) {
         // Add the cars to the back of the queue.
         switch (type) {
@@ -221,6 +280,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
     }
 
+    /**
+     * Removes car from the spot and put them in the exit queue.
+     *
+     * @param car The car that leaves the spot.
+     */
     private void carLeavesSpot(Car car) {
         removeCarAt(car.getLocation());
         exitCarQueue.addCar(car);
@@ -228,26 +292,57 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     // Methods from SimulatorView
 
+    /**
+     * Sets the total number of open spots in the car park.
+     *
+     * @return The total number of open spots in the car park.
+     */
     private int setNumberOfOpenSpots() {
         return numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
     }
 
+    /**
+     * Gets the number of floors in the car park.
+     *
+     * @return The number of floors in the car park.
+     */
     public int getNumberOfFloors() {
         return numberOfFloors;
     }
 
+    /**
+     * Gets the number of rows in the car park on each floor.
+     *
+     * @return The number of rows in the car park on each floor.
+     */
     public int getNumberOfRows() {
         return numberOfRows;
     }
 
+    /**
+     * Gets the number of places in the car park on each row.
+     *
+     * @return The number of places in the car park on each row.
+     */
     public int getNumberOfPlaces() {
         return numberOfPlaces;
     }
 
+    /**
+     * Gets the number of open spots in the car park.
+     *
+     * @return The number of open spots in the car park.
+     */
     public int getNumberOfOpenSpots() {
         return numberOfOpenSpots;
     }
 
+    /**
+     * Gets a car on a specific location.
+     *
+     * @param location The location of the car.
+     * @return The car on the specific location.
+     */
     public Car getCarAt(Location location) {
         if (!locationIsValid(location)) {
             return null;
@@ -255,6 +350,13 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return cars[location.getFloor()][location.getRow()][location.getPlace()];
     }
 
+    /**
+     * Sets a car at a specific location.
+     *
+     * @param location The location a car has to park.
+     * @param car      The car that has to park.
+     * @return If the car has parked successful or not.
+     */
     public boolean setCarAt(Location location, Car car) {
         if (!locationIsValid(location)) {
             return false;
@@ -277,6 +379,12 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return false;
     }
 
+    /**
+     * Removes a car from the specific location.
+     *
+     * @param location The location the car has to be removed.
+     * @return The car that has been removed.
+     */
     public Car removeCarAt(Location location) {
         if (!locationIsValid(location)) {
             return null;
@@ -304,6 +412,12 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return car;
     }
 
+    /**
+     * Gets the first free location a car can park.
+     *
+     * @param car The car that wants to park.
+     * @return The location the car can park.
+     */
     public Location getFirstFreeLocation(Car car) {
         for (int floor = 0; floor < getNumberOfFloors(); floor++) {
             for (int row = 0; row < getNumberOfRows(); row++) {
@@ -322,6 +436,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return null;
     }
 
+    /**
+     * Gets the car that has to leave.
+     *
+     * @return The car that has to leave.
+     */
     public Car getFirstLeavingCar() {
         for (int floor = 0; floor < getNumberOfFloors(); floor++) {
             for (int row = 0; row < getNumberOfRows(); row++) {
@@ -337,7 +456,10 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return null;
     }
 
-    public void viewTick() {
+    /**
+     * Removes a minute from time the cars wants to park.
+     */
+    public void carTick() {
         for (int floor = 0; floor < getNumberOfFloors(); floor++) {
             for (int row = 0; row < getNumberOfRows(); row++) {
                 for (int place = 0; place < getNumberOfPlaces(); place++) {
@@ -351,6 +473,12 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
     }
 
+    /**
+     * Check if the given location is a valid location in the car park.
+     *
+     * @param location The location to check.
+     * @return If it is valid or not. ( true / false )
+     */
     private boolean locationIsValid(Location location) {
         int floor = location.getFloor();
         int row = location.getRow();
@@ -361,11 +489,19 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return true;
     }
 
+    /**
+     * Gets the amount of steps that the simulation needs to run.
+     *
+     * @return The amount of steps that the simulation needs to run.
+     */
     public String getSteps() {
         return Integer.toString(steps);
     }
 
     @Override
+    /**
+     * Starts the simulation.
+     */
     public void run() {
         for (int i = 0; i < numOfSteps && run; i++) {
             tick();
