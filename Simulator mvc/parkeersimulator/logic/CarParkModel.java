@@ -1,6 +1,8 @@
 package parkeersimulator.logic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import parkeersimulator.objects.*;
@@ -24,10 +26,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private CarQueue entrancePassQueue;
     private CarQueue paymentCarQueue;
     private CarQueue exitCarQueue;
+    private Garage garage;
     private int day = 0;
     private int hour = 0;
     private int minute = 0;
-    private int tickPause = 20;
+    private int tickPause = 10;
     private int steps = 0;
 
     private ArrayList<Location> spots;
@@ -64,14 +67,19 @@ public class CarParkModel extends AbstractModel implements Runnable {
         cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
         spots = new ArrayList<>();
         passHolders = new ArrayList<>();
-        assignSpots();
+        getAllSpots();
+        garage = new Garage(this);
         setPassSpot();
     }
 
+    public int getLocInfo(Location location) {
+        return garage.getStateAt(location);
+    }
+
     /**
-     * This put all available places into a list.
+     * Gets all available spots and put them into a list.
      */
-    public void assignSpots() {
+    public void getAllSpots() {
         for (int i = 0; i < numberOfFloors; i++) {
             for (int j = 0; j < numberOfRows; j++) {
                 for (int k = 0; k < numberOfPlaces; k++) {
@@ -86,9 +94,18 @@ public class CarParkModel extends AbstractModel implements Runnable {
      */
     private void setPassSpot() {
         for (int i = 0; i < numberOfPasses; i++) {
-            setCarAt(spots.get(i), new ResCar());
+            garage.setStateAt(spots.get(i), 5);
             passHolders.add(spots.get(i));
         }
+    }
+
+    public boolean getPassSpot(int floor, int row, int place) {
+        for (Location loc : passHolders) {
+            if (loc.getFloor() == floor && loc.getRow() == row && loc.getPlace() == place) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -363,16 +380,17 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
         Car oldCar = getCarAt(location);
         if (car instanceof ParkingPassCar) {
-            if (oldCar instanceof ResCar) {
-                removeCarAt(location);
+            if (garage.getStateAt(location) == 5 || garage.getStateAt(location) == 0) {
                 cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
                 car.setLocation(location);
+                garage.setCarAt(location, car, 2);
                 return true;
             }
         }
-        if (oldCar == null) {
+        if (oldCar == null || garage.getStateAt(location) == 0) {
             cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
             car.setLocation(location);
+            garage.setCarAt(location, car, 1);
             numberOfOpenSpots--;
             return true;
         }
@@ -402,12 +420,13 @@ public class CarParkModel extends AbstractModel implements Runnable {
         if (passHolder) {
             cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
             car.setLocation(null);
-            setCarAt(location, new ResCar());
+            garage.setStateAt(location, 5);
             numberOfOpenSpots++;
             return car;
         }
         cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
         car.setLocation(null);
+        garage.setStateAt(location, 0);
         numberOfOpenSpots++;
         return car;
     }
@@ -424,10 +443,10 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 for (int place = 0; place < getNumberOfPlaces(); place++) {
                     Location location = new Location(floor, row, place);
                     if (car instanceof ParkingPassCar) {
-                        if (getCarAt(location) instanceof ResCar || getCarAt(location) == null) {
+                        if (garage.getStateAt(location) == 5 || garage.getStateAt(location) == 0) {
                             return location;
                         }
-                    } else if (getCarAt(location) == null) {
+                    } else if (garage.getStateAt(location) == 0) {
                         return location;
                     }
                 }
@@ -507,7 +526,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
             tick();
             notifyViews();
             try {
-                Thread.sleep(100);
+                Thread.sleep(tickPause);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

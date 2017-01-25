@@ -1,10 +1,13 @@
 package parkeersimulator.objects;
 
+import java.awt.*;
+
 public class Location {
 
     private int floor;
     private int row;
     private int place;
+    private int state = 0;
 
     /**
      * Constructor for objects of class Location
@@ -66,6 +69,14 @@ public class Location {
      */
     public int getPlace() {
         return place;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 
 }
