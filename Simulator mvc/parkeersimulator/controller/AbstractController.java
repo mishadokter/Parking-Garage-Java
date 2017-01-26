@@ -11,4 +11,6 @@ public abstract class AbstractController extends JPanel {
     public AbstractController(CarParkModel model) {
         this.model = model;
     }
+
+
 }

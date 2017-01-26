@@ -17,7 +17,7 @@ public class RunController extends AbstractController implements ActionListener 
 
     public RunController(CarParkModel model) {
         super(model);
-        setSize(800, 500);
+        //setSize(400, 500);
         stepOne = new JButton("Step one");
         stepOne.addActionListener(this);
         stepHundred = new JButton("Step hundred");

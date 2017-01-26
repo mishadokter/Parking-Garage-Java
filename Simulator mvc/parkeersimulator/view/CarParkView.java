@@ -21,6 +21,7 @@ public class CarParkView extends AbstractView {
         super(model);
         size = new Dimension(0, 0);
         steps = new JLabel();
+
         add(steps);
         steps.setBounds(410, 10, 70, 30);
     }
@@ -56,7 +57,10 @@ public class CarParkView extends AbstractView {
     2 - place taken by pass holder
     5 - empty place for pass holders*/
     public void updateView() {
-        steps.setText(model.getSteps());
+        //steps.setText(model.getSteps());
+        steps.setText(model.getQueue().toString());
+
+        //model.getQueue();
         // Create a new car park image if the size has changed.
         if (!size.equals(getSize())) {
             size = getSize();

@@ -1,7 +1,9 @@
 package parkeersimulator.logic;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 
 import parkeersimulator.objects.*;
 
@@ -20,7 +22,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
     int weekendPassArrivals = 5; // average number of arriving cars per hour
     int numberOfPasses = 68;
-    int enterSpeed = 3; // number of cars that can enter per minute
+    int enterSpeed = 1; // number of cars that can enter per minute
     int paymentSpeed = 7; // number of cars that can pay per minute
     int exitSpeed = 5; // number of cars that can leave per minute
     private CarQueue entranceCarQueue;
@@ -36,7 +38,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     private ArrayList<Location> spots;
     private ArrayList<Location> passHolders;
-
+    private Map<String, String> optionFields;
     private int numOfSteps;
     private boolean run;
 
@@ -73,6 +75,43 @@ public class CarParkModel extends AbstractModel implements Runnable {
         setPassSpot();
     }
 
+    public CarParkModel(TreeMap<String,String> optionFields) {
+        this.optionFields = optionFields;
+        weekDayArrivals =  setOption("weekDayArrivals"); // average number of arriving cars per hour
+        weekendArrivals = setOption("weekendArrivals"); // average number of arriving cars per hour
+        weekDayBadArrivals = setOption("weekDayBadArrivals");
+        weekendBadArrivals = setOption("weekendBadArrivals");
+        weekDayPassArrivals = setOption("weekDayPassArrivals"); // average number of arriving cars per hour
+        weekendPassArrivals = setOption("weekendPassArrivals"); // average number of arriving cars per hour
+        numberOfPasses = setOption("wumberOfPasses");
+        enterSpeed = setOption("enterSpeed"); // number of cars that can enter per minute
+        paymentSpeed = setOption("paymentSpeed"); // number of cars that can pay per minute
+        exitSpeed = setOption("exitSpeed"); // number of cars that can leave per minute
+        day = setOption("day");
+        hour = setOption("hour");
+        minute = setOption("minute");
+        tickPause = setOption("tickPause");
+        steps = setOption("steps");
+        entranceCarQueue = new CarQueue();
+        entrancePassQueue = new CarQueue();
+        paymentCarQueue = new CarQueue();
+        exitCarQueue = new CarQueue();
+        setNumberOfOpenSpots();
+        this.numberOfFloors = setOption("numberOfFloors");
+        this.numberOfRows = setOption("numberOfRows");
+        this.numberOfPlaces = setOption("numberOfPlaces");
+        run = false;
+        this.numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
+        cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
+        spots = new ArrayList<>();
+        passHolders = new ArrayList<>();
+        getAllSpots();
+        garage = new Garage(this);
+        setPassSpot();
+    }
+
+
+
     public int getLocInfo(Location location) {
         return garage.getStateAt(location);
     }
@@ -98,6 +137,10 @@ public class CarParkModel extends AbstractModel implements Runnable {
             garage.setStateAt(spots.get(i), 5);
             passHolders.add(spots.get(i));
         }
+    }
+
+    public int setOption(String varName){
+        return Integer.parseInt(optionFields.get(varName).toString());
     }
 
     public boolean getPassSpot(int floor, int row, int place) {
@@ -571,6 +614,14 @@ public class CarParkModel extends AbstractModel implements Runnable {
     public String getSteps() {
         return Integer.toString(steps);
     }
+
+    public String getQueue() {
+        return "[GET TESTER] entranceCarQueue: "+ entranceCarQueue.carsInQueue() +
+                " entrancePassQueue: " +entrancePassQueue.carsInQueue() +
+                " paymentCarQueue: " + paymentCarQueue.carsInQueue() +
+                " exitCarQueue: " +exitCarQueue.carsInQueue();
+    }
+
 
     @Override
     /**

@@ -26,6 +26,7 @@ public abstract class AbstractModel {
      */
     public void addView(AbstractView view) {
         views.add(view);
+        System.out.println(views.size());
     }
 
     /**
@@ -34,6 +35,7 @@ public abstract class AbstractModel {
     public void notifyViews() {
         for (AbstractView v : views) {
             v.updateView();
+
         }
     }
 }
