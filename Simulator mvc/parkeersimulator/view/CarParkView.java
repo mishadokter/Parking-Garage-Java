@@ -50,6 +50,11 @@ public class CarParkView extends AbstractView {
         }
     }
 
+    /*The state of the location mean:
+    0 - empty place
+    1 - taken place
+    2 - place taken by pass holder
+    5 - empty place for pass holders*/
     public void updateView() {
         steps.setText(model.getSteps());
         // Create a new car park image if the size has changed.
@@ -64,7 +69,7 @@ public class CarParkView extends AbstractView {
                     Location location = new Location(floor, row, place);
                     Car car = model.getCarAt(location);
                     int state = model.getLocInfo(location);
-                    Color color = Color.WHITE;
+                    Color color;
                     switch (state) {
                         case 0:
                             color = Color.WHITE;
@@ -77,6 +82,9 @@ public class CarParkView extends AbstractView {
                             break;
                         case 5:
                             color = Color.GREEN;
+                            break;
+                        case 6:
+                            color = Color.DARK_GRAY;
                             break;
                         default:
                             color = Color.WHITE;

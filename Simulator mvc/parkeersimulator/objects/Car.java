@@ -1,6 +1,5 @@
 package parkeersimulator.objects;
 
-import java.awt.*;
 
 public abstract class Car {
 
@@ -8,6 +7,7 @@ public abstract class Car {
     private int minutesLeft;
     private boolean isPaying;
     private boolean hasToPay;
+    private int state;
 
     /**
      * Constructor for objects of class Car
@@ -52,5 +52,11 @@ public abstract class Car {
         minutesLeft--;
     }
 
-    public abstract Color getColor();
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
 }

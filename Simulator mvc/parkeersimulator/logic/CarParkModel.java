@@ -1,8 +1,6 @@
 package parkeersimulator.logic;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import parkeersimulator.objects.*;
@@ -14,8 +12,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     private static final String AD_HOC = "1";
     private static final String PASS = "2";
+    private static final String BAD = "3";
     int weekDayArrivals = 100; // average number of arriving cars per hour
     int weekendArrivals = 200; // average number of arriving cars per hour
+    int weekDayBadArrivals = 18;
+    int weekendBadArrivals = 35;
     int weekDayPassArrivals = 50; // average number of arriving cars per hour
     int weekendPassArrivals = 5; // average number of arriving cars per hour
     int numberOfPasses = 68;
@@ -191,6 +192,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
         addArrivingCars(numberOfCars, AD_HOC);
         numberOfCars = getNumberOfCars(weekDayPassArrivals, weekendPassArrivals);
         addArrivingCars(numberOfCars, PASS);
+        numberOfCars = getNumberOfCars(weekDayBadArrivals, weekendBadArrivals);
+        addArrivingCars(numberOfCars, BAD);
     }
 
     /**
@@ -294,6 +297,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
                     entrancePassQueue.addCar(new ParkingPassCar());
                 }
                 break;
+            case BAD:
+                for (int i = 0; i < numberOfCars; i++) {
+                    entranceCarQueue.addCar(new BadParkerCar());
+                }
+                break;
         }
     }
 
@@ -374,6 +382,12 @@ public class CarParkModel extends AbstractModel implements Runnable {
      * @param car      The car that has to park.
      * @return If the car has parked successful or not.
      */
+    /*The state of the location mean:
+    0 - empty place
+    1 - taken place
+    2 - place taken by pass holder
+    5 - empty place for pass holders
+    6 - taken by a bad parker*/
     public boolean setCarAt(Location location, Car car) {
         if (!locationIsValid(location)) {
             return false;
@@ -383,14 +397,22 @@ public class CarParkModel extends AbstractModel implements Runnable {
             if (garage.getStateAt(location) == 5 || garage.getStateAt(location) == 0) {
                 cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
                 car.setLocation(location);
-                garage.setCarAt(location, car, 2);
+                garage.setCarAt(location, car, car.getState());
                 return true;
             }
         }
         if (oldCar == null || garage.getStateAt(location) == 0) {
+            if (car instanceof BadParkerCar) {
+                cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
+                car.setLocation(location);
+                garage.setCarAt(location, car, car.getState());
+                garage.setCarAt(((BadParkerCar) car).getSecondLocation(), car, car.getState());
+                numberOfOpenSpots -= 2;
+                return true;
+            }
             cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
             car.setLocation(location);
-            garage.setCarAt(location, car, 1);
+            garage.setCarAt(location, car, car.getState());
             numberOfOpenSpots--;
             return true;
         }
@@ -424,6 +446,15 @@ public class CarParkModel extends AbstractModel implements Runnable {
             numberOfOpenSpots++;
             return car;
         }
+        if (car instanceof BadParkerCar) {
+            Location loc2 = ((BadParkerCar) car).getSecondLocation();
+            cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
+            car.setLocation(null);
+            garage.setStateAt(location, 0);
+            garage.setStateAt(loc2, 0);
+            numberOfOpenSpots += 2;
+            return car;
+        }
         cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
         car.setLocation(null);
         garage.setStateAt(location, 0);
@@ -446,6 +477,26 @@ public class CarParkModel extends AbstractModel implements Runnable {
                         if (garage.getStateAt(location) == 5 || garage.getStateAt(location) == 0) {
                             return location;
                         }
+                    } else if (car instanceof BadParkerCar) {
+                        Location location2 = new Location(floor, row, place - 1);
+                        Location location3 = new Location(floor, row, place + 1);
+
+                        if (garage.getStateAt(location) == 0) {
+                            if (locationIsValid(location2)) {
+                                if (garage.getStateAt(location2) == 0) {
+                                    ((BadParkerCar) car).setSecondLocation(location2);
+                                    return location;
+                                }
+                            } else if (locationIsValid(location3)) {
+                                if (garage.getStateAt(location3) == 0) {
+                                    ((BadParkerCar) car).setSecondLocation(location3);
+                                    return location;
+                                }
+                            } else {
+                                return null;
+                            }
+                        }
+
                     } else if (garage.getStateAt(location) == 0) {
                         return location;
                     }
@@ -454,6 +505,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
         return null;
     }
+
 
     /**
      * Gets the car that has to leave.
@@ -499,6 +551,9 @@ public class CarParkModel extends AbstractModel implements Runnable {
      * @return If it is valid or not. ( true / false )
      */
     private boolean locationIsValid(Location location) {
+        if (location == null) {
+            return false;
+        }
         int floor = location.getFloor();
         int row = location.getRow();
         int place = location.getPlace();
