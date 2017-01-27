@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 import parkeersimulator.logic.AbstractModel;
 import parkeersimulator.logic.CarParkModel;
 
-public class AbstractView extends JPanel {
+public abstract class AbstractView extends JPanel {
 
     protected CarParkModel model;
 
@@ -15,7 +15,7 @@ public class AbstractView extends JPanel {
     }
 
     public AbstractModel getModel() {
-        return this.model;
+        return model;
     }
 
     public void updateView() {

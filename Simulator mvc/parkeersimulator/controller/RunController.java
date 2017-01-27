@@ -21,9 +21,9 @@ public class RunController extends AbstractController implements ActionListener 
     public RunController(CarParkModel model) {
         super(model);
         //setSize(400, 500);
-        stepOne = new JButton("Step one");
+        stepOne = new JButton("Day");
         stepOne.addActionListener(this);
-        stepHundred = new JButton("Step hundred");
+        stepHundred = new JButton("Week");
         stepHundred.addActionListener(this);
         startSteps = new JButton("Start");
         startSteps.addActionListener(this);
@@ -70,7 +70,7 @@ public class RunController extends AbstractController implements ActionListener 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == stepOne) {
             try {
-                model.start(1);
+                model.start(1440);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -80,7 +80,7 @@ public class RunController extends AbstractController implements ActionListener 
         if (e.getSource() == stepHundred) {
             disableButtons();
             try {
-                model.start(100);
+                model.start(10080);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 enableButtons();

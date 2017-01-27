@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
+import parkeersimulator.main.CarParkSim;
 import parkeersimulator.objects.*;
 
 /**
@@ -111,6 +112,52 @@ public class CarParkModel extends AbstractModel implements Runnable {
     }
 
 
+
+    public String getDay() {
+        String dayName = null;
+        switch (day) {
+            case 0:
+                dayName = "maandag";
+                break;
+            case 1:
+                dayName = "dinsdag";
+                break;
+            case 2:
+                dayName = "woensdag";
+                break;
+            case 3:
+                dayName = "donderdag";
+                break;
+            case 4:
+                dayName = "vrijdag";
+                break;
+            case 5:
+                dayName = "zaterdag";
+                break;
+            case 6:
+                dayName = "zondag";
+                break;
+        }
+        return dayName;
+    }
+
+    public String getHour() {
+        String hourString = Integer.toString(hour);
+        if (hour < 10) {
+            return hourString = "0" + hourString;
+        } else {
+            return hourString;
+        }
+    }
+
+    public String getMinute() {
+        String minuteString = Integer.toString(minute);
+        if (minute < 10) {
+            return minuteString = "0" + minuteString;
+        } else {
+            return minuteString;
+        }
+    }
 
     public int getLocInfo(Location location) {
         return garage.getStateAt(location);
@@ -621,7 +668,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 " paymentCarQueue: " + paymentCarQueue.carsInQueue() +
                 " exitCarQueue: " +exitCarQueue.carsInQueue();
     }
-
 
     @Override
     /**

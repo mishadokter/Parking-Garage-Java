@@ -97,6 +97,7 @@ public class CarParkGui extends JFrame {
             JTextField temp = (JTextField)me.getValue();
             System.out.println(me.getKey().toString() + " | " + temp.getText());
             defaultValues.put(me.getKey().toString(), temp.getText());
+
         }
         new CarParkSim(defaultValues);
     }
