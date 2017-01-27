@@ -112,7 +112,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     }
 
 
-
+// Return de dag
     public String getDay() {
         String dayName = null;
         switch (day) {
