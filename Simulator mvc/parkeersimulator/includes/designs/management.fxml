@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="900.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="parkeersimulator.controller.ManagementController">
+    <children>
+        <Pane prefHeight="900.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <LineChart fx:id="linechart" layoutX="29.0" layoutY="194.0" prefHeight="416.0" prefWidth="1222.0" title="Temperature of session">
+                    <xAxis>
+                        <CategoryAxis label="Time (s)" fx:id="xAxis" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis fx:id="yAxis" label="Temperature (Â°C)" side="LEFT" upperBound="160.0" />
+                    </yAxis>
+                </LineChart>
+                <GridPane layoutX="254.0" layoutY="87.0" prefHeight="150.0" prefWidth="771.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="274.0" minWidth="10.0" prefWidth="274.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="10.0" prefWidth="273.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="273.0" minWidth="10.0" prefWidth="273.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                    <children>
+                        <Label prefHeight="53.0" prefWidth="153.0" text="Temperature fluid:" GridPane.halignment="CENTER" GridPane.valignment="TOP">
+                            <font>
+                                <Font size="16.0" />
+                            </font>
+                        </Label>
+                        <Label prefHeight="52.0" prefWidth="181.0" text="Temperature vapor:" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="TOP">
+                            <font>
+                                <Font size="16.0" />
+                            </font>
+                        </Label>
+                        <TextField fx:id="fluidT" editable="false" />
+                        <TextField fx:id="gasT" editable="false" GridPane.columnIndex="2" />
+                    </children>
+                </GridPane>
+                <Label layoutX="474.0" layoutY="14.0" text="TempTracker">
+                    <font>
+                        <Font size="50.0" />
+                    </font>
+                </Label>
+                <TextArea editable="false" layoutX="190.0" layoutY="638.0" prefHeight="160.0" prefWidth="900.0" promptText="&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;&#9;------Warning log------- " wrapText="true" />
+                <Button layoutX="540.0" layoutY="808.0" mnemonicParsing="false" prefHeight="65.0" prefWidth="200.0" text="STOP">
+                    <font>
+                        <Font size="22.0" />
+                    </font>
+                </Button>
+            </children></Pane>
+    </children>
+</AnchorPane>

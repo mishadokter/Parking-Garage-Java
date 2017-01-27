@@ -1,11 +1,13 @@
 package parkeersimulator.controller;
 
 import parkeersimulator.logic.CarParkModel;
+import parkeersimulator.view.ManagementView;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+
 
 public class RunController extends AbstractController implements ActionListener {
 
@@ -13,6 +15,7 @@ public class RunController extends AbstractController implements ActionListener 
     private JButton stepHundred;
     private JButton startSteps;
     private JButton stopSteps;
+    private JButton settings;
     private ArrayList<JButton> buttons;
 
     public RunController(CarParkModel model) {
@@ -26,6 +29,8 @@ public class RunController extends AbstractController implements ActionListener 
         startSteps.addActionListener(this);
         stopSteps = new JButton("Stop");
         stopSteps.addActionListener(this);
+        settings = new JButton("Settings");
+        settings.addActionListener(this);
 
 
         buttons = new ArrayList<>();
@@ -38,10 +43,12 @@ public class RunController extends AbstractController implements ActionListener 
         add(stepHundred);
         add(startSteps);
         add(stopSteps);
+        add(settings);
         stepOne.setBounds(50, 10, 70, 30);
         stepHundred.setBounds(140, 10, 70, 30);
         startSteps.setBounds(230, 10, 70, 30);
         stopSteps.setBounds(320, 10, 70, 30);
+        settings.setBounds(410, 10, 70, 30);
 
         setVisible(true);
 
@@ -88,6 +95,22 @@ public class RunController extends AbstractController implements ActionListener 
             } catch (Exception ex) {
                 ex.printStackTrace();
                 enableButtons();
+            }
+            return;
+        }
+
+         if (e.getSource() == settings) {
+            disableButtons();
+            try {
+                ManagementView mv = new ManagementView();
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        mv.run();
+                    }
+                });
+            } catch (Exception ex) {
+                System.out.println("Settings file not found");
             }
             return;
         }
