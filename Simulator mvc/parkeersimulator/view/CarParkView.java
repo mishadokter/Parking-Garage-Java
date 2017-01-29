@@ -59,8 +59,8 @@ public class CarParkView extends AbstractView {
     2 - place taken by pass holder
     5 - empty place for pass holders*/
     public void updateView() {
-        //steps.setText(model.getSteps());
-        steps.setText(model.getQueue().toString());
+        steps.setText(model.getSteps());
+        //steps.setText(model.getQueue().toString());
 
         //model.getQueue();
         // Create a new car park image if the size has changed.

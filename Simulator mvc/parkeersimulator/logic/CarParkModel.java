@@ -37,6 +37,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private ArrayList<Location> spots;
     private ArrayList<Location> passHolders;
     private Map<String, Integer> modelSettings;
+    private TreeMap<String, String> modelStats;
     private int numOfSteps;
     private boolean run;
 
@@ -50,12 +51,13 @@ public class CarParkModel extends AbstractModel implements Runnable {
     /**
      * Creates the car park.
      *
-     * @param numberOfFloors The number of floors.
-     * @param numberOfRows   The number of rows on each floor.
-     * @param numberOfPlaces The number of places on each row.
+     * @param //numberOfFloors The number of floors.
+     * @param //numberOfRows   The number of rows on each floor.
+     * @param //numberOfPlaces The number of places on each row.
      */
     public CarParkModel() {
         modelSettings = new HashMap<>();
+        modelStats = new TreeMap<>();
         entranceCarQueue = new CarQueue();
         entrancePassQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
@@ -95,7 +97,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         modelSettings.put("day",                day);
         modelSettings.put("hour",               hour);
         modelSettings.put("minute",             minute);
-        modelSettings.put("numberOfOpenSpots",  numberOfOpenSpots);
+        //modelSettings.put("numberOfOpenSpots",  numberOfOpenSpots);
         setReferences();
     }
     /*
@@ -120,7 +122,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         day =                   modelSettings.get("day");
         hour =                  modelSettings.get("hour");
         minute =                modelSettings.get("minute");
-        numberOfOpenSpots =     modelSettings.get("numberOfOpenSpots");
+        //numberOfOpenSpots =     modelSettings.get("numberOfOpenSpots");
     }
     public Map<String, Integer> getOptions(){
         return modelSettings;
@@ -131,7 +133,9 @@ public class CarParkModel extends AbstractModel implements Runnable {
     public void setOption(String ref, int val){
         modelSettings.put(ref, val);
     }
-
+    public Map<String, String> getStats(){
+        return modelStats;
+    }
 // Return de dag
     public String getDay() {
         String dayName = null;
@@ -199,7 +203,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     /**
      * This set places specially for pass holders.
      */
-    private void setPassSpot() {
+    public void setPassSpot() {
         for (int i = 0; i < numberOfPasses; i++) {
             garage.setStateAt(spots.get(i), 5);
             passHolders.add(spots.get(i));
@@ -287,6 +291,13 @@ public class CarParkModel extends AbstractModel implements Runnable {
      * Update all views.
      */
     private void updateViews() {
+        modelStats.put("Time", hour+":"+minute+":00");
+        modelStats.put("Day", getDay());
+        modelStats.put("Entrance Queue", String.valueOf(entranceCarQueue.carsInQueue()));
+        modelStats.put("Entrance Pass Queue", String.valueOf(entrancePassQueue.carsInQueue()));
+        modelStats.put("Payment Queue", String.valueOf(paymentCarQueue.carsInQueue()));
+        modelStats.put("Exit Queue", String.valueOf(exitCarQueue.carsInQueue()));
+        modelStats.put("Open Spots", String.valueOf(getNumberOfOpenSpots()));
         carTick();
         notifyViews();
     }
@@ -505,6 +516,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
                 car.setLocation(location);
                 garage.setCarAt(location, car, car.getState());
+                numberOfOpenSpots--;
                 return true;
             }
         }
@@ -679,12 +691,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return Integer.toString(steps);
     }
 
-    public String getQueue() {
-        return "[GET TESTER] entranceCarQueue: "+ entranceCarQueue.carsInQueue() +
-                " entrancePassQueue: " +entrancePassQueue.carsInQueue() +
-                " paymentCarQueue: " + paymentCarQueue.carsInQueue() +
-                " exitCarQueue: " +exitCarQueue.carsInQueue();
-    }
+
 
     @Override
     /**

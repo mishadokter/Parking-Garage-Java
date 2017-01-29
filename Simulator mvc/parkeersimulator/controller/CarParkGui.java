@@ -97,8 +97,9 @@ public class CarParkGui extends AbstractController {
         while(i.hasNext()) {
             Map.Entry me = (Map.Entry)i.next();
             JTextField temp = (JTextField)me.getValue();
-            System.out.println(me.getKey().toString() + " | " + temp.getText());
+            //System.out.println(me.getKey().toString() + " | " + temp.getText());
             model.setOption(me.getKey().toString(), Integer.parseInt(temp.getText()));
+
         }
         model.setReferences();
     }

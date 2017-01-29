@@ -22,6 +22,7 @@ public class CarParkSim {
     private CarParkModel carParkModel;
     private AbstractController runController;
     private CarParkGui guiView;
+    private StatsView statView;
 
     /**
      * The constructor
@@ -32,17 +33,19 @@ public class CarParkSim {
         carParkView = new CarParkView(carParkModel);
         timeView = new TimeView(carParkModel);
         guiView = new CarParkGui(carParkModel);
-
+        statView = new StatsView(carParkModel);
         screen = new JFrame("CityPark Groningen parking simulator");
 
-        screen.setSize(850, 650);
+        screen.setSize(1100, 650);
         screen.setLayout(null);
         screen.setResizable(true);
         screen.getContentPane().add(carParkView, BorderLayout.CENTER);
         screen.getContentPane().add(timeView, BorderLayout.SOUTH);
+        screen.getContentPane().add(statView, BorderLayout.EAST);
         screen.getContentPane().add(runController);
         carParkView.setBounds(10, 10, 800, 500);
         runController.setBounds(0, 550, 800, 50);
+        statView.setBounds(850,62,200,500);
         screen.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         screen.setVisible(true);
     }
