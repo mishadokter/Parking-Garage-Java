@@ -102,6 +102,7 @@ public class RunController extends AbstractController implements ActionListener 
          if (e.getSource() == settings) {
             disableButtons();
             try {
+
                 ManagementView mv = new ManagementView();
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override

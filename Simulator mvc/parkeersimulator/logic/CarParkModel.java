@@ -1,11 +1,7 @@
 package parkeersimulator.logic;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 
-import parkeersimulator.main.CarParkSim;
 import parkeersimulator.objects.*;
 
 /**
@@ -16,16 +12,17 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private static final String AD_HOC = "1";
     private static final String PASS = "2";
     private static final String BAD = "3";
-    int weekDayArrivals = 100; // average number of arriving cars per hour
-    int weekendArrivals = 200; // average number of arriving cars per hour
-    int weekDayBadArrivals = 18;
-    int weekendBadArrivals = 35;
-    int weekDayPassArrivals = 50; // average number of arriving cars per hour
-    int weekendPassArrivals = 5; // average number of arriving cars per hour
-    int numberOfPasses = 68;
-    int enterSpeed = 1; // number of cars that can enter per minute
-    int paymentSpeed = 7; // number of cars that can pay per minute
-    int exitSpeed = 5; // number of cars that can leave per minute
+    private int weekDayArrivals = 100; // average number of arriving cars per hour
+    private int weekendArrivals = 200; // average number of arriving cars per hour
+    private int weekDayBadArrivals = 18;
+    private int weekendBadArrivals = 35;
+    private int weekDayPassArrivals = 50; // average number of arriving cars per hour
+    private int weekendPassArrivals = 5; // average number of arriving cars per hour
+    private int numberOfPasses = 68;
+    private int enterSpeed = 1; // number of cars that can enter per minute
+    private int paymentSpeed = 7; // number of cars that can pay per minute
+    private int exitSpeed = 5; // number of cars that can leave per minute
+
     private CarQueue entranceCarQueue;
     private CarQueue entrancePassQueue;
     private CarQueue paymentCarQueue;
@@ -39,14 +36,14 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     private ArrayList<Location> spots;
     private ArrayList<Location> passHolders;
-    private Map<String, String> optionFields;
+    private Map<String, Integer> modelSettings;
     private int numOfSteps;
     private boolean run;
 
     // Fields from SimulatorView
-    private int numberOfFloors;
-    private int numberOfRows;
-    private int numberOfPlaces;
+    private int numberOfFloors = 3;
+    private int numberOfRows = 6;
+    private int numberOfPlaces = 30;
     private int numberOfOpenSpots;
     private Car[][][] cars;
 
@@ -57,60 +54,83 @@ public class CarParkModel extends AbstractModel implements Runnable {
      * @param numberOfRows   The number of rows on each floor.
      * @param numberOfPlaces The number of places on each row.
      */
-    public CarParkModel(int numberOfFloors, int numberOfRows, int numberOfPlaces) {
+    public CarParkModel() {
+        modelSettings = new HashMap<>();
         entranceCarQueue = new CarQueue();
         entrancePassQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
         setNumberOfOpenSpots();
-        this.numberOfFloors = numberOfFloors;
-        this.numberOfRows = numberOfRows;
-        this.numberOfPlaces = numberOfPlaces;
         run = false;
-        this.numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
+        numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
         cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
         spots = new ArrayList<>();
         passHolders = new ArrayList<>();
         getAllSpots();
         garage = new Garage(this);
         setPassSpot();
+        setDefaults();
+
     }
 
-    public CarParkModel(TreeMap<String,String> optionFields) {
-        this.optionFields = optionFields;
-        weekDayArrivals =  setOption("weekDayArrivals"); // average number of arriving cars per hour
-        weekendArrivals = setOption("weekendArrivals"); // average number of arriving cars per hour
-        weekDayBadArrivals = setOption("weekDayBadArrivals");
-        weekendBadArrivals = setOption("weekendBadArrivals");
-        weekDayPassArrivals = setOption("weekDayPassArrivals"); // average number of arriving cars per hour
-        weekendPassArrivals = setOption("weekendPassArrivals"); // average number of arriving cars per hour
-        numberOfPasses = setOption("wumberOfPasses");
-        enterSpeed = setOption("enterSpeed"); // number of cars that can enter per minute
-        paymentSpeed = setOption("paymentSpeed"); // number of cars that can pay per minute
-        exitSpeed = setOption("exitSpeed"); // number of cars that can leave per minute
-        day = setOption("day");
-        hour = setOption("hour");
-        minute = setOption("minute");
-        tickPause = setOption("tickPause");
-        steps = setOption("steps");
-        entranceCarQueue = new CarQueue();
-        entrancePassQueue = new CarQueue();
-        paymentCarQueue = new CarQueue();
-        exitCarQueue = new CarQueue();
-        setNumberOfOpenSpots();
-        this.numberOfFloors = setOption("numberOfFloors");
-        this.numberOfRows = setOption("numberOfRows");
-        this.numberOfPlaces = setOption("numberOfPlaces");
-        run = false;
-        this.numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
-        cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
-        spots = new ArrayList<>();
-        passHolders = new ArrayList<>();
-        getAllSpots();
-        garage = new Garage(this);
-        setPassSpot();
+    /*
+    Stop alle default waarden in de hashMap.
+     */
+    private void setDefaults(){
+        modelSettings.put("numberOfFloors",     numberOfFloors);
+        modelSettings.put("numberOfRows",       numberOfRows);
+        modelSettings.put("numberOfPlaces",     numberOfPlaces);
+        modelSettings.put("weekDayArrivals",    weekDayArrivals);
+        modelSettings.put("weekendArrivals",    weekendArrivals);
+        modelSettings.put("weekDayBadArrivals", weekDayBadArrivals);
+        modelSettings.put("weekendBadArrivals", weekendBadArrivals);
+        modelSettings.put("weekDayPassArrivals",weekDayPassArrivals);
+        modelSettings.put("weekendPassArrivals",weekendPassArrivals);
+        modelSettings.put("numberOfPasses",     numberOfPasses);
+        modelSettings.put("enterSpeed",         enterSpeed);
+        modelSettings.put("paymentSpeed",       paymentSpeed);
+        modelSettings.put("exitSpeed",          exitSpeed);
+        modelSettings.put("tickPause",          tickPause);
+        modelSettings.put("steps",              steps);
+        modelSettings.put("day",                day);
+        modelSettings.put("hour",               hour);
+        modelSettings.put("minute",             minute);
+        modelSettings.put("numberOfOpenSpots",  numberOfOpenSpots);
+        setReferences();
     }
-
+    /*
+    Deze functie set de referenties naar die van de hashmap.
+     */
+    public void setReferences(){
+        numberOfFloors =        modelSettings.get("numberOfFloors");
+        numberOfRows =          modelSettings.get("numberOfRows");
+        numberOfPlaces =        modelSettings.get("numberOfPlaces");
+        weekDayArrivals =       modelSettings.get("weekDayArrivals");
+        weekendArrivals =       modelSettings.get("weekendArrivals");
+        weekDayBadArrivals =    modelSettings.get("weekDayBadArrivals");
+        weekendBadArrivals =    modelSettings.get("weekendBadArrivals");
+        weekDayPassArrivals =   modelSettings.get("weekDayPassArrivals");
+        weekendPassArrivals =   modelSettings.get("weekendPassArrivals");
+        numberOfPasses =        modelSettings.get("numberOfPasses");
+        enterSpeed =            modelSettings.get("enterSpeed");
+        paymentSpeed =          modelSettings.get("paymentSpeed");
+        exitSpeed =             modelSettings.get("exitSpeed");
+        tickPause =             modelSettings.get("tickPause");
+        steps =                 modelSettings.get("steps");
+        day =                   modelSettings.get("day");
+        hour =                  modelSettings.get("hour");
+        minute =                modelSettings.get("minute");
+        numberOfOpenSpots =     modelSettings.get("numberOfOpenSpots");
+    }
+    public Map<String, Integer> getOptions(){
+        return modelSettings;
+    }
+    public int getOption(String ref){
+        return modelSettings.get(ref);
+    }
+    public void setOption(String ref, int val){
+        modelSettings.put(ref, val);
+    }
 
 // Return de dag
     public String getDay() {
@@ -186,9 +206,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
     }
 
-    public int setOption(String varName){
-        return Integer.parseInt(optionFields.get(varName).toString());
-    }
 
     public boolean getPassSpot(int floor, int row, int place) {
         for (Location loc : passHolders) {

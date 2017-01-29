@@ -68,6 +68,7 @@ public class CarParkView extends AbstractView {
             size = getSize();
             carParkImage = createImage(size.width, size.height);
         }
+        carParkImage = createImage(size.width, size.height);
         Graphics graphics = carParkImage.getGraphics();
         for (int floor = 0; floor < model.getNumberOfFloors(); floor++) {
             for (int row = 0; row < model.getNumberOfRows(); row++) {
