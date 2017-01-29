@@ -294,7 +294,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         modelStats.put("Time", String.format("%02d", hour)+":"+String.format("%02d", minute)+":00");
         modelStats.put("Day", getDay());
         modelStats.put("Entrance Queue", String.valueOf(entranceCarQueue.carsInQueue()));
-        modelStats.put("Entrance Pass Queue", String.valueOf(entrancePassQueue.carsInQueue()));
+        modelStats.put("Pass Queue", String.valueOf(entrancePassQueue.carsInQueue()));
         modelStats.put("Payment Queue", String.valueOf(paymentCarQueue.carsInQueue()));
         modelStats.put("Exit Queue", String.valueOf(exitCarQueue.carsInQueue()));
         modelStats.put("Open Spots", String.valueOf(getNumberOfOpenSpots()));
