@@ -22,7 +22,7 @@ public abstract class DefaultView {
             JFrame frame = new JFrame("Swing and JavaFX");
             final JFXPanel fxPanel = new JFXPanel();
             frame.add(fxPanel);
-            frame.setSize(800, 500);
+            frame.setSize(950, 580);
             frame.setVisible(true);
             Parent root = FXMLLoader.load(getClass().getResource("../includes/designs/" + getLayoutFile()));
             defaultScene = new Scene(root);

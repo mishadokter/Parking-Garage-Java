@@ -29,7 +29,7 @@ public class RunController extends AbstractController implements ActionListener 
         startSteps.addActionListener(this);
         stopSteps = new JButton("Stop");
         stopSteps.addActionListener(this);
-        settings = new JButton("Settings");
+        settings = new JButton("Management");
         settings.addActionListener(this);
 
 
