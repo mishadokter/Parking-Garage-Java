@@ -18,9 +18,10 @@ public class CarParkGui extends AbstractController {
     private Map<String, Integer> defaultValues;
     private JPanel tabArrivals,tabOptions,tabCount;
     private JFrame guiFrame;
+
     public CarParkGui(CarParkModel model) {
         super(model);
-      //  defaultValues = model.getOptions();
+        //  defaultValues = model.getOptions();
         optionFields = new TreeMap<>();
         guiFrame = new JFrame();
         //Panelen aanmaken voor tab content//
@@ -99,7 +100,6 @@ public class CarParkGui extends AbstractController {
             JTextField temp = (JTextField)me.getValue();
             //System.out.println(me.getKey().toString() + " | " + temp.getText());
             model.setOption(me.getKey().toString(), Integer.parseInt(temp.getText()));
-
         }
         model.setReferences();
     }

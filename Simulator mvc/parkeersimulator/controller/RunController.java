@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 public class RunController extends AbstractController implements ActionListener {
 
-    private JButton stepOne;
-    private JButton stepHundred;
+    private JButton stepDay;
+    private JButton stepWeek;
     private JButton startSteps;
     private JButton stopSteps;
     private JButton settings;
@@ -21,10 +21,10 @@ public class RunController extends AbstractController implements ActionListener 
     public RunController(CarParkModel model) {
         super(model);
         //setSize(400, 500);
-        stepOne = new JButton("Day");
-        stepOne.addActionListener(this);
-        stepHundred = new JButton("Week");
-        stepHundred.addActionListener(this);
+        stepDay = new JButton("Day");
+        stepDay.addActionListener(this);
+        stepWeek = new JButton("Week");
+        stepWeek.addActionListener(this);
         startSteps = new JButton("Start");
         startSteps.addActionListener(this);
         stopSteps = new JButton("Stop");
@@ -34,21 +34,21 @@ public class RunController extends AbstractController implements ActionListener 
 
 
         buttons = new ArrayList<>();
-        buttons.add(stepOne);
-        buttons.add(stepHundred);
+        buttons.add(stepDay);
+        buttons.add(stepWeek);
         buttons.add(startSteps);
 
         this.setLayout(null);
-        add(stepOne);
-        add(stepHundred);
+        add(stepDay);
+        add(stepWeek);
         add(startSteps);
         add(stopSteps);
         add(settings);
-        stepOne.setBounds(50, 10, 70, 30);
-        stepHundred.setBounds(140, 10, 70, 30);
+        stepDay.setBounds(50, 10, 70, 30);
+        stepWeek.setBounds(140, 10, 70, 30);
         startSteps.setBounds(230, 10, 70, 30);
         stopSteps.setBounds(320, 10, 70, 30);
-        settings.setBounds(410, 10, 70, 30);
+        settings.setBounds(410, 10, 140, 30);
 
         setVisible(true);
 
@@ -68,7 +68,7 @@ public class RunController extends AbstractController implements ActionListener 
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == stepOne) {
+        if (e.getSource() == stepDay) {
             try {
                 model.start(1440);
             } catch (Exception ex) {
@@ -77,7 +77,7 @@ public class RunController extends AbstractController implements ActionListener 
             return;
         }
 
-        if (e.getSource() == stepHundred) {
+        if (e.getSource() == stepWeek) {
             disableButtons();
             try {
                 model.start(10080);
@@ -99,7 +99,7 @@ public class RunController extends AbstractController implements ActionListener 
             return;
         }
 
-         if (e.getSource() == settings) {
+        if (e.getSource() == settings) {
             disableButtons();
             try {
 

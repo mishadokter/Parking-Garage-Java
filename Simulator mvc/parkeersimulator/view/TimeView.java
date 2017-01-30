@@ -23,13 +23,11 @@ public class TimeView extends AbstractView {
         this.add(dayLabel);
         this.add(hourLabel);
         this.add(minuteLabel);
-        setVisible(true);
-        time.setVisible(true);
     }
 
     public void updateView() {
-        dayLabel.setText(model.getDay()+" :");
-        hourLabel.setText(model.getHour()+" :");
+        dayLabel.setText(model.getDay() + " :");
+        hourLabel.setText(model.getHour() + " :");
         minuteLabel.setText(model.getMinute());
     }
 

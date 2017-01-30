@@ -45,7 +45,7 @@ public class CarParkView extends AbstractView {
         Dimension currentSize = getSize();
         if (size.equals(currentSize)) {
             g.drawImage(carParkImage, 0, 0, null);
-           // g.setColor(Color.DARK_GRAY);
+            // g.setColor(Color.DARK_GRAY);
         } else {
             // Rescale the previous image.
             g.drawImage(carParkImage, 0, 0, currentSize.width, currentSize.height, null);
@@ -61,7 +61,6 @@ public class CarParkView extends AbstractView {
     public void updateView() {
         steps.setText(model.getSteps());
         //steps.setText(model.getQueue().toString());
-
         //model.getQueue();
         // Create a new car park image if the size has changed.
         if (!size.equals(getSize())) {

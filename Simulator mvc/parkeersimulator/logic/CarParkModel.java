@@ -14,12 +14,12 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private static final String BAD = "3";
     private int weekDayArrivals = 100; // average number of arriving cars per hour
     private int weekendArrivals = 200; // average number of arriving cars per hour
-    private int weekDayBadArrivals = 18;
-    private int weekendBadArrivals = 35;
+    private int weekDayBadArrivals = 4;
+    private int weekendBadArrivals = 10;
     private int weekDayPassArrivals = 50; // average number of arriving cars per hour
     private int weekendPassArrivals = 5; // average number of arriving cars per hour
-    private int numberOfPasses = 68;
-    private int enterSpeed = 1; // number of cars that can enter per minute
+    private int numberOfPasses = 15;
+    private int enterSpeed = 3; // number of cars that can enter per minute
     private int paymentSpeed = 7; // number of cars that can pay per minute
     private int exitSpeed = 5; // number of cars that can leave per minute
 
@@ -37,8 +37,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private ArrayList<Location> spots;
     private ArrayList<Location> passHolders;
     private Map<String, Integer> modelSettings;
+    private int minutesToRun;
     private TreeMap<String, String> modelStats;
-    private int numOfSteps;
     private boolean run;
 
     // Fields from SimulatorView
@@ -50,10 +50,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     /**
      * Creates the car park.
-     *
-     * @param //numberOfFloors The number of floors.
-     * @param //numberOfRows   The number of rows on each floor.
-     * @param //numberOfPlaces The number of places on each row.
      */
     public CarParkModel() {
         modelSettings = new HashMap<>();
@@ -78,65 +74,75 @@ public class CarParkModel extends AbstractModel implements Runnable {
     /*
     Stop alle default waarden in de hashMap.
      */
-    private void setDefaults(){
-        modelSettings.put("numberOfFloors",     numberOfFloors);
-        modelSettings.put("numberOfRows",       numberOfRows);
-        modelSettings.put("numberOfPlaces",     numberOfPlaces);
-        modelSettings.put("weekDayArrivals",    weekDayArrivals);
-        modelSettings.put("weekendArrivals",    weekendArrivals);
+    private void setDefaults() {
+        modelSettings.put("numberOfFloors", numberOfFloors);
+        modelSettings.put("numberOfRows", numberOfRows);
+        modelSettings.put("numberOfPlaces", numberOfPlaces);
+        modelSettings.put("weekDayArrivals", weekDayArrivals);
+        modelSettings.put("weekendArrivals", weekendArrivals);
         modelSettings.put("weekDayBadArrivals", weekDayBadArrivals);
         modelSettings.put("weekendBadArrivals", weekendBadArrivals);
-        modelSettings.put("weekDayPassArrivals",weekDayPassArrivals);
-        modelSettings.put("weekendPassArrivals",weekendPassArrivals);
-        modelSettings.put("numberOfPasses",     numberOfPasses);
-        modelSettings.put("enterSpeed",         enterSpeed);
-        modelSettings.put("paymentSpeed",       paymentSpeed);
-        modelSettings.put("exitSpeed",          exitSpeed);
-        modelSettings.put("tickPause",          tickPause);
-        modelSettings.put("steps",              steps);
-        modelSettings.put("day",                day);
-        modelSettings.put("hour",               hour);
-        modelSettings.put("minute",             minute);
+        modelSettings.put("weekDayPassArrivals", weekDayPassArrivals);
+        modelSettings.put("weekendPassArrivals", weekendPassArrivals);
+        modelSettings.put("numberOfPasses", numberOfPasses);
+        modelSettings.put("enterSpeed", enterSpeed);
+        modelSettings.put("paymentSpeed", paymentSpeed);
+        modelSettings.put("exitSpeed", exitSpeed);
+        modelSettings.put("tickPause", tickPause);
+        modelSettings.put("steps", steps);
+        modelSettings.put("day", day);
+        modelSettings.put("hour", hour);
+        modelSettings.put("minute", minute);
         //modelSettings.put("numberOfOpenSpots",  numberOfOpenSpots);
         setReferences();
     }
+
     /*
     Deze functie set de referenties naar die van de hashmap.
      */
-    public void setReferences(){
-        numberOfFloors =        modelSettings.get("numberOfFloors");
-        numberOfRows =          modelSettings.get("numberOfRows");
-        numberOfPlaces =        modelSettings.get("numberOfPlaces");
-        weekDayArrivals =       modelSettings.get("weekDayArrivals");
-        weekendArrivals =       modelSettings.get("weekendArrivals");
-        weekDayBadArrivals =    modelSettings.get("weekDayBadArrivals");
-        weekendBadArrivals =    modelSettings.get("weekendBadArrivals");
-        weekDayPassArrivals =   modelSettings.get("weekDayPassArrivals");
-        weekendPassArrivals =   modelSettings.get("weekendPassArrivals");
-        numberOfPasses =        modelSettings.get("numberOfPasses");
-        enterSpeed =            modelSettings.get("enterSpeed");
-        paymentSpeed =          modelSettings.get("paymentSpeed");
-        exitSpeed =             modelSettings.get("exitSpeed");
-        tickPause =             modelSettings.get("tickPause");
-        steps =                 modelSettings.get("steps");
-        day =                   modelSettings.get("day");
-        hour =                  modelSettings.get("hour");
-        minute =                modelSettings.get("minute");
+    public void setReferences() {
+        numberOfFloors = modelSettings.get("numberOfFloors");
+        numberOfRows = modelSettings.get("numberOfRows");
+        numberOfPlaces = modelSettings.get("numberOfPlaces");
+        weekDayArrivals = modelSettings.get("weekDayArrivals");
+        weekendArrivals = modelSettings.get("weekendArrivals");
+        weekDayBadArrivals = modelSettings.get("weekDayBadArrivals");
+        weekendBadArrivals = modelSettings.get("weekendBadArrivals");
+        weekDayPassArrivals = modelSettings.get("weekDayPassArrivals");
+        weekendPassArrivals = modelSettings.get("weekendPassArrivals");
+        numberOfPasses = modelSettings.get("numberOfPasses");
+        enterSpeed = modelSettings.get("enterSpeed");
+        paymentSpeed = modelSettings.get("paymentSpeed");
+        exitSpeed = modelSettings.get("exitSpeed");
+        tickPause = modelSettings.get("tickPause");
+        steps = modelSettings.get("steps");
+        day = modelSettings.get("day");
+        hour = modelSettings.get("hour");
+        minute = modelSettings.get("minute");
         //numberOfOpenSpots =     modelSettings.get("numberOfOpenSpots");
     }
-    public Map<String, Integer> getOptions(){
+
+    public Map<String, Integer> getOptions() {
         return modelSettings;
     }
-    public int getOption(String ref){
+
+    public int getOption(String ref) {
         return modelSettings.get(ref);
     }
-    public void setOption(String ref, int val){
+
+    public void setOption(String ref, int val) {
         modelSettings.put(ref, val);
     }
-    public Map<String, String> getStats(){
+
+    public Map<String, String> getStats() {
         return modelStats;
     }
-// Return de dag
+
+    /**
+     * Gets the day of the week
+     *
+     * @return The day of the week
+     */
     public String getDay() {
         String dayName = null;
         switch (day) {
@@ -203,30 +209,27 @@ public class CarParkModel extends AbstractModel implements Runnable {
     /**
      * This set places specially for pass holders.
      */
-    public void setPassSpot() {
+    private void setPassSpot() {
         for (int i = 0; i < numberOfPasses; i++) {
             garage.setStateAt(spots.get(i), 5);
             passHolders.add(spots.get(i));
         }
     }
 
-
-    public boolean getPassSpot(int floor, int row, int place) {
-        for (Location loc : passHolders) {
-            if (loc.getFloor() == floor && loc.getRow() == row && loc.getPlace() == place) {
-                return true;
-            }
+    private void updatePassSpot() {
+        passHolders.clear();
+        for (int i = 0; i < numberOfPasses; i++) {
+            passHolders.add(spots.get(i));
         }
-        return false;
     }
 
     /**
      * Starts the simulation.
      *
-     * @param numberOfSteps The amount of steps the simulation has to run.
+     * @param minutesToRun The amount of minutes the simulation has to run.
      */
-    public void start(int numberOfSteps) {
-        numOfSteps = numberOfSteps;
+    public void start(int minutesToRun) {
+        this.minutesToRun = minutesToRun;
         run = true;
         new Thread(this).start();
     }
@@ -291,7 +294,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
      * Update all views.
      */
     private void updateViews() {
-        modelStats.put("Time", String.format("%02d", hour)+":"+String.format("%02d", minute)+":00");
+        modelStats.put("Time", String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":00");
         modelStats.put("Day", getDay());
         modelStats.put("Entrance Queue", String.valueOf(entranceCarQueue.carsInQueue()));
         modelStats.put("Pass Queue", String.valueOf(entrancePassQueue.carsInQueue()));
@@ -301,6 +304,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         carTick();
         notifyViews();
     }
+
 
     /**
      * Add arriving cars to their correct queue.
@@ -391,9 +395,41 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 : weekend;
 
         // Calculate the number of cars that arrive this minute.
-        double standardDeviation = averageNumberOfCarsPerHour * 0.3;
-        double numberOfCarsPerHour = averageNumberOfCarsPerHour + random.nextGaussian() * standardDeviation;
-        return (int) Math.round(numberOfCarsPerHour / 60);
+        //double standardDeviation = averageNumberOfCarsPerHour * 0.3;
+        //double numberOfCarsPerHour = averageNumberOfCarsPerHour + random.nextGaussian() * standardDeviation;
+        //return (int) Math.round(numberOfCarsPerHour / 60);
+
+        if (getDay().equals("vrijdag") || getDay().equals("zaterdag")) {
+            if (hour > 20 || hour < 2) {
+                averageNumberOfCarsPerHour = (int) Math.ceil(averageNumberOfCarsPerHour * 10);
+            } else {
+                averageNumberOfCarsPerHour = (int) Math.ceil(averageNumberOfCarsPerHour / 3);
+            }
+        } else {
+            if (hour > 20 || hour < 7) {
+                averageNumberOfCarsPerHour = (int) Math.ceil(averageNumberOfCarsPerHour / 3);
+            }
+        }
+
+
+        double drCurve = averageNumberOfCarsPerHour - (10 * entranceCarQueue.carsInQueue());
+        if (drCurve < 1) {
+            drCurve = 1;
+        }
+
+
+        // Calculate the number of cars that arrive this minute.
+        double standardDeviation = drCurve * 0.1;
+        double numberOfCarsPerHour = drCurve + (random.nextGaussian() * standardDeviation);
+        int numberOfCarsPerMinute = 0;
+        while (numberOfCarsPerHour > 60) {
+            numberOfCarsPerMinute++;
+            numberOfCarsPerHour -= 60;
+        }
+        if (random.nextDouble() < (numberOfCarsPerHour / 60)) {
+            numberOfCarsPerMinute++;
+        }
+        return numberOfCarsPerMinute;
     }
 
     /**
@@ -692,13 +728,12 @@ public class CarParkModel extends AbstractModel implements Runnable {
     }
 
 
-
     @Override
     /**
      * Starts the simulation.
      */
     public void run() {
-        for (int i = 0; i < numOfSteps && run; i++) {
+        for (int i = 0; i < minutesToRun && run; i++) {
             tick();
             notifyViews();
             try {
@@ -709,6 +744,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
 
         run = false;
-        numOfSteps = 0;
+
+        minutesToRun = 0;
     }
 }
