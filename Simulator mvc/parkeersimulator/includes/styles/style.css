@@ -1,1 +1,7 @@
 /** Ruimte voor styles hier **/
+
+#testor {
+        -fx-font: 16px "Serif";
+        -fx-padding: 10;
+        -fx-background-color: #e1e1e1;
+}

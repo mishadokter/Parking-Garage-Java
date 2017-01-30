@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -16,6 +17,8 @@ import java.io.IOException;
  * Created by Misha on 26-1-2017.
  */
 public class ManagementController {
+
+    private PieChart piechart;
 
         public static void initAndShowGUI() throws IOException {
             Platform.runLater(new Runnable() {
@@ -64,5 +67,7 @@ public class ManagementController {
                 }
             });
         }
+
+
     }
 

@@ -15,6 +15,7 @@ public class SimulatorView extends JFrame implements ActionListener {
     private Car[][][] cars;
 
     private JButton stepOne;
+    private JPopupMenu textTester;
     private JButton stepHundred;
 
     private JButton lastClicked;
@@ -26,6 +27,7 @@ public class SimulatorView extends JFrame implements ActionListener {
         cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
         stepOne = new JButton("+1");
         stepOne.addActionListener(this);
+        textTester = new JPopupMenu("Testor");
         stepHundred = new JButton("+100");
         stepHundred.addActionListener(this);
         carParkView = new CarParkView();
@@ -34,9 +36,11 @@ public class SimulatorView extends JFrame implements ActionListener {
         contentPane.add(carParkView, BorderLayout.CENTER);
         carParkView.setLayout(null);
         carParkView.add(stepOne);
+        carParkView.add(textTester);
         carParkView.add(stepHundred);
         stepOne.setBounds(50, 10, 70, 30);
         stepHundred.setBounds(140, 10, 70, 30);
+        textTester.setBounds(210, 10, 70, 30);
         pack();
         setVisible(true);
 
