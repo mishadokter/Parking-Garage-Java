@@ -4,13 +4,15 @@ import java.util.Random;
 
 public class BadParkerCar extends Car {
     private Location loc2;
+    private int state2;
 
     public BadParkerCar() {
         Random random = new Random();
-        int stayMinutes = (int) (15 + random.nextFloat() * 3 * 60);
+        int stayMinutes = 30 + random.nextInt(30) * 6;
         this.setMinutesLeft(stayMinutes);
         this.setHasToPay(true);
         this.setState(6);
+        setState2();
     }
 
     /**
@@ -25,5 +27,13 @@ public class BadParkerCar extends Car {
      */
     public void setSecondLocation(Location location) {
         this.loc2 = location;
+    }
+
+    public void setState2() {
+        state2 = 7;
+    }
+
+    public int getState2() {
+        return state2;
     }
 }

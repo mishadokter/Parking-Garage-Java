@@ -28,7 +28,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private CarQueue paymentCarQueue;
     private CarQueue exitCarQueue;
     private Garage garage;
-    private int day = 0;
+    private int day = 4;
     private int hour = 0;
     private int minute = 0;
     private int tickPause = 10;
@@ -116,10 +116,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
         exitSpeed = modelSettings.get("exitSpeed");
         tickPause = modelSettings.get("tickPause");
         steps = modelSettings.get("steps");
-        day = modelSettings.get("day");
-        hour = modelSettings.get("hour");
-        minute = modelSettings.get("minute");
-        //numberOfOpenSpots =     modelSettings.get("numberOfOpenSpots");
     }
 
     public Map<String, Integer> getOptions() {
@@ -379,6 +375,42 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
     }
 
+    private boolean isTheather() {
+        String friday = "vrijdag";
+        String saturday = "zaterdag";
+        String sunday = "zondag";
+        if (getDay().equals(friday) || getDay().equals(saturday)) {
+            if (hour >= 18 && hour <= 20) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (getDay().equals(sunday)) {
+            if (hour >= 14 && hour <= 18) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    private boolean isShopNight() {
+        if (getDay().equals("donderdag")) {
+            if (hour >= 17 && hour <= 22) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isNight() {
+        if (hour > 20 || hour < 7) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Gets the number of cars that are entering.
      *
@@ -394,42 +426,25 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 ? weekDay
                 : weekend;
 
-        // Calculate the number of cars that arrive this minute.
-        //double standardDeviation = averageNumberOfCarsPerHour * 0.3;
-        //double numberOfCarsPerHour = averageNumberOfCarsPerHour + random.nextGaussian() * standardDeviation;
-        //return (int) Math.round(numberOfCarsPerHour / 60);
 
-        if (getDay().equals("vrijdag") || getDay().equals("zaterdag")) {
-            if (hour > 20 || hour < 2) {
-                averageNumberOfCarsPerHour = (int) Math.ceil(averageNumberOfCarsPerHour * 10);
-            } else {
-                averageNumberOfCarsPerHour = (int) Math.ceil(averageNumberOfCarsPerHour / 3);
-            }
-        } else {
-            if (hour > 20 || hour < 7) {
-                averageNumberOfCarsPerHour = (int) Math.ceil(averageNumberOfCarsPerHour / 3);
-            }
+        if (isTheather()) {
+            averageNumberOfCarsPerHour = (int) Math.ceil(averageNumberOfCarsPerHour * 3);
+        } else if (isNight()) {
+            averageNumberOfCarsPerHour = (int) Math.ceil(averageNumberOfCarsPerHour / 3);
         }
 
-
-        double drCurve = averageNumberOfCarsPerHour - (10 * entranceCarQueue.carsInQueue());
-        if (drCurve < 1) {
-            drCurve = 1;
+        if (isShopNight()) {
+            averageNumberOfCarsPerHour = (int) Math.ceil(averageNumberOfCarsPerHour * 1.5);
+        } else if (isNight()) {
+            averageNumberOfCarsPerHour = (int) Math.ceil(averageNumberOfCarsPerHour / 3);
         }
 
+        averageNumberOfCarsPerHour -= 10 * (entranceCarQueue.carsInQueue());
 
         // Calculate the number of cars that arrive this minute.
-        double standardDeviation = drCurve * 0.1;
-        double numberOfCarsPerHour = drCurve + (random.nextGaussian() * standardDeviation);
-        int numberOfCarsPerMinute = 0;
-        while (numberOfCarsPerHour > 60) {
-            numberOfCarsPerMinute++;
-            numberOfCarsPerHour -= 60;
-        }
-        if (random.nextDouble() < (numberOfCarsPerHour / 60)) {
-            numberOfCarsPerMinute++;
-        }
-        return numberOfCarsPerMinute;
+        double standardDeviation = 15;
+        double numberOfCarsPerHour = averageNumberOfCarsPerHour + random.nextGaussian() * standardDeviation;
+        return (int) Math.round(numberOfCarsPerHour / 60);
     }
 
     /**
@@ -549,6 +564,9 @@ public class CarParkModel extends AbstractModel implements Runnable {
         Car oldCar = getCarAt(location);
         if (car instanceof ParkingPassCar) {
             if (garage.getStateAt(location) == 5 || garage.getStateAt(location) == 0) {
+                if ((isTheather() && (hour >= 18 && hour <= 19)) || (isTheather() && (hour >= 13 && hour <= 14))) {
+                    car.setMinutesLeft(240);
+                }
                 cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
                 car.setLocation(location);
                 garage.setCarAt(location, car, car.getState());
@@ -558,12 +576,23 @@ public class CarParkModel extends AbstractModel implements Runnable {
         }
         if (oldCar == null || garage.getStateAt(location) == 0) {
             if (car instanceof BadParkerCar) {
+                if ((isTheather() && (hour >= 18 && hour <= 19)) || (isTheather() && (hour >= 13 && hour <= 14))) {
+                    car.setMinutesLeft(240);
+                }
                 cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
                 car.setLocation(location);
-                garage.setCarAt(location, car, car.getState());
-                garage.setCarAt(((BadParkerCar) car).getSecondLocation(), car, car.getState());
+                if (((BadParkerCar) car).getSecondLocation().getPlace() < car.getLocation().getPlace()) {
+                    garage.setCarAt(location, car, ((BadParkerCar) car).getState2());
+                    garage.setCarAt(((BadParkerCar) car).getSecondLocation(), car, car.getState());
+                } else {
+                    garage.setCarAt(location, car, car.getState());
+                    garage.setCarAt(((BadParkerCar) car).getSecondLocation(), car, ((BadParkerCar) car).getState2());
+                }
                 numberOfOpenSpots -= 2;
                 return true;
+            }
+            if ((isTheather() && (hour >= 18 && hour <= 19)) || (isTheather() && (hour >= 13 && hour <= 14))) {
+                car.setMinutesLeft(240);
             }
             cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
             car.setLocation(location);
@@ -604,7 +633,9 @@ public class CarParkModel extends AbstractModel implements Runnable {
         if (car instanceof BadParkerCar) {
             Location loc2 = ((BadParkerCar) car).getSecondLocation();
             cars[location.getFloor()][location.getRow()][location.getPlace()] = null;
+            cars[loc2.getFloor()][loc2.getRow()][loc2.getPlace()] = null;
             car.setLocation(null);
+            ((BadParkerCar) car).setSecondLocation(null);
             garage.setStateAt(location, 0);
             garage.setStateAt(loc2, 0);
             numberOfOpenSpots += 2;
