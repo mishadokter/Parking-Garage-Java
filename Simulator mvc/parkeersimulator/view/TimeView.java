@@ -3,11 +3,15 @@ package parkeersimulator.view;
 import parkeersimulator.logic.CarParkModel;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+import java.awt.*;
 
 /**
  * Created by sanderpost on 26-01-17.
  */
 public class TimeView extends AbstractView {
+
 
     private JPanel time;
     private JLabel dayLabel;

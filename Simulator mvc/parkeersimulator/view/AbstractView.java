@@ -7,7 +7,7 @@ import parkeersimulator.logic.CarParkModel;
 
 import java.awt.*;
 
-public abstract class AbstractView extends JPanel {
+public class AbstractView extends JPanel {
 
     protected CarParkModel model;
 

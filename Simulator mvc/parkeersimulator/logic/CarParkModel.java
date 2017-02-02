@@ -1,5 +1,8 @@
 package parkeersimulator.logic;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.*;
 
 import parkeersimulator.objects.*;
@@ -28,7 +31,9 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private CarQueue paymentCarQueue;
     private CarQueue exitCarQueue;
     private Garage garage;
-    private int day = 4;
+    private PropertyChangeSupport changes = new PropertyChangeSupport(this);
+    private String[] colors;
+    private int day = 0;
     private int hour = 0;
     private int minute = 0;
     private int tickPause = 10;
@@ -39,7 +44,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private Map<String, Integer> modelSettings;
     private int minutesToRun;
     private TreeMap<String, String> modelStats;
-    private boolean run;
+    public boolean run;
 
     // Fields from SimulatorView
     private int numberOfFloors = 3;
@@ -68,7 +73,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         garage = new Garage(this);
         setPassSpot();
         setDefaults();
-
+        fillColors();
     }
 
     /*
@@ -90,9 +95,10 @@ public class CarParkModel extends AbstractModel implements Runnable {
         modelSettings.put("exitSpeed", exitSpeed);
         modelSettings.put("tickPause", tickPause);
         modelSettings.put("steps", steps);
-        modelSettings.put("day", day);
-        modelSettings.put("hour", hour);
-        modelSettings.put("minute", minute);
+        // No need for days and Hour here, set's the time always to start (0)!
+        //modelSettings.put("day", day);
+        //modelSettings.put("hour", hour);
+        //modelSettings.put("minute", minute);
         //modelSettings.put("numberOfOpenSpots",  numberOfOpenSpots);
         setReferences();
     }
@@ -116,6 +122,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
         exitSpeed = modelSettings.get("exitSpeed");
         tickPause = modelSettings.get("tickPause");
         steps = modelSettings.get("steps");
+        // If there's no time added to the list, you can't get it.
+        //day = modelSettings.get("day");
+        //hour = modelSettings.get("hour");
+        //minute = modelSettings.get("minute");
+        //numberOfOpenSpots =     modelSettings.get("numberOfOpenSpots");
     }
 
     public Map<String, Integer> getOptions() {
@@ -167,13 +178,48 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return dayName;
     }
 
-    public String getHour() {
-        String hourString = Integer.toString(hour);
-        if (hour < 10) {
-            return hourString = "0" + hourString;
-        } else {
-            return hourString;
-        }
+    /**
+     * A method to fill an array of strings.
+     * In this case each key represents the current hour in the sim.
+     * TODO make the switch between dark and light more even.
+     */
+    private void fillColors() {
+        colors = new String[24];
+        colors[0] = "#000000";
+        colors[1] = "#000000";
+        colors[2] = "#595959";
+        colors[3] = "#8c8c8c";
+        colors[4] = "#bfbfbf";
+        colors[5] = "#e6e6e6";
+        colors[6] = "#f2f2f2";
+        // Here it's light!
+        colors[7] = "#ffffff";
+        colors[8] = "#ffffff";
+        colors[9] = "#ffffff";
+        colors[10] = "#ffffff";
+        colors[11] = "#ffffff";
+        colors[12] = "#ffffff";
+        colors[13] = "#ffffff";
+        colors[14] = "#ffffff";
+        colors[15] = "#ffffff";
+        colors[16] = "#ffffff";
+        colors[17] = "#f2f2f2";
+        colors[18] = "#e6e6e6";
+        colors[19] = "#d9d9d9";
+        // It's dr again!
+        colors[20] = "#bfbfbf";
+        colors[21] = "#8c8c8c";
+        colors[22] = "#262626";
+        colors[23] = "#000000";
+    }
+
+    public String getColor() {
+        String newColor = colors[getHour()];
+        return newColor;
+    }
+
+    public int getHour() {
+        return hour;
     }
 
     public String getMinute() {
@@ -256,13 +302,15 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     /**
      * Counting like a clock starting from 00:00.
+     * And added an bean fire method. If the variable change a bean will be fired.
      */
     private void advanceTime() {
         // Advance the time by one minute.
         minute++;
         while (minute > 59) {
             minute -= 60;
-            hour++;
+            // This is the firing method.
+            changes.firePropertyChange("Hour change",minute,hour++);
         }
         while (hour > 23) {
             hour -= 24;
@@ -271,7 +319,14 @@ public class CarParkModel extends AbstractModel implements Runnable {
         while (day > 6) {
             day -= 7;
         }
+    }
 
+    /**
+     * We want to listen to our changed property.
+     * @param l The property change listener
+     */
+    public void addPropertyListener(PropertyChangeListener l) {
+        changes.addPropertyChangeListener(l);
     }
 
     private void handleEntrance() {
