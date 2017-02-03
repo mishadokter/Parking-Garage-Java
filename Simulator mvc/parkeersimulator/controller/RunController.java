@@ -51,12 +51,12 @@ public class RunController extends AbstractController implements ActionListener 
         stepWeek.setBounds(140, 10, 70, 30);
         startSteps.setBounds(230, 10, 70, 30);
         stopSteps.setBounds(320, 10, 70, 30);
-        settings.setBounds(410, 10, 110, 30);
-        guiButton.setBounds(540, 10, 70, 30);
-        resetButton.setBounds(630, 10, 70, 30);
+        settings.setBounds(410, 10, 130, 30);
+        guiButton.setBounds(560, 10, 100, 30);
+        resetButton.setBounds(680, 10, 100, 30);
 
         // Loop om dezelfde style mee te geven aan alle buttons.
-        for (JButton b : Arrays.asList(stepDay, stepWeek, startSteps, stopSteps, settings)) {
+        for (JButton b : Arrays.asList(stepDay, stepWeek, startSteps, stopSteps, settings, guiButton, resetButton)) {
             b.setBackground(new Color(59, 89, 182));
             b.setForeground(Color.WHITE);
             b.setFocusPainted(false);
