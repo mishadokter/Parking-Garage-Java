@@ -89,6 +89,7 @@ public class CarParkSim implements PropertyChangeListener {
         screen.repaint();
         jLayer.repaint();
         jLayer.updateUI();
+        System.out.println("Change");
     }
 
 

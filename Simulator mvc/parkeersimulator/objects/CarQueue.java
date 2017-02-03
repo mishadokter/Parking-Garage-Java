@@ -14,6 +14,13 @@ public class CarQueue {
         return queue.poll();
     }
 
+    public Car getCar() {
+        return queue.element();
+    }
+
+    public void deleteCar() {
+    }
+
     public int carsInQueue() {
         return queue.size();
     }

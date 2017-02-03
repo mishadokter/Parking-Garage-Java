@@ -5,6 +5,7 @@ public abstract class Car {
 
     private Location location;
     private int minutesLeft;
+    private int totalMinutes;
     private boolean isPaying;
     private boolean hasToPay;
     private int state;
@@ -30,6 +31,14 @@ public abstract class Car {
 
     public void setMinutesLeft(int minutesLeft) {
         this.minutesLeft = minutesLeft;
+    }
+
+    public void setTotalMinutes() {
+        totalMinutes =
+    }
+
+    public int getTotalMinutes() {
+        return totalMinutes;
     }
 
     public boolean getIsPaying() {
@@ -58,5 +67,6 @@ public abstract class Car {
 
     public void setState(int state) {
         this.state = state;
+        System.out.println("# State is: "+state);
     }
 }

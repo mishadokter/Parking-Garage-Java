@@ -46,9 +46,9 @@ public class ColorOverlay extends LayerUI<JComponent> implements PropertyChangeL
         Graphics2D g2 = (Graphics2D) g.create();
 
         int w = c.getWidth();
-        int h = c.getHeight();
+        int h = c.getHeight()/7;
         g2.setComposite(AlphaComposite.getInstance(
-                AlphaComposite.SRC_OVER, .5f));
+                AlphaComposite.SRC_OVER, .75f));
 
         Color exitColor = new Color(255,255,255,0);
 
