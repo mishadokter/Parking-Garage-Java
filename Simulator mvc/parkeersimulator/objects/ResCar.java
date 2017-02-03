@@ -4,6 +4,9 @@ import java.util.Random;
 
 public class ResCar extends Car {
 
+    /**
+     * Creates a "reservation" car ???spot???...
+     */
     public ResCar() {
         Random random = new Random();
         int stayMinutes = 30 + random.nextInt(30) * 6;

@@ -71,12 +71,4 @@ public class Location {
         return place;
     }
 
-    public int getState() {
-        return state;
-    }
-
-    public void setState(int state) {
-        this.state = state;
-    }
-
 }

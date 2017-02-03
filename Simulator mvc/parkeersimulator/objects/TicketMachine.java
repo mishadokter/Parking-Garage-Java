@@ -2,9 +2,7 @@ package parkeersimulator.objects;
 
 import parkeersimulator.logic.CarParkModel;
 
-/**
- * Created by sanderpost on 02-02-17.
- */
+
 public class TicketMachine {
     private int total;
     private int totalPayments;
@@ -14,6 +12,7 @@ public class TicketMachine {
         this.model = model;
         totalPayments = 0;
     }
+
 
     public void normalPay() {
         int hourPay = 10;
