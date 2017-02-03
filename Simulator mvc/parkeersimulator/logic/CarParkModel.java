@@ -15,8 +15,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private static final String AD_HOC = "1";
     private static final String PASS = "2";
     private static final String BAD = "3";
+    private static final String RES = "4";
     private int weekDayArrivals = 100; // average number of arriving cars per hour
     private int weekendArrivals = 200; // average number of arriving cars per hour
+    private int weekDayResArrivals = 5; // average number of arriving cars per hour
+    private int weekendResArrivals = 15; // average number of arriving cars per hour
     private int weekDayBadArrivals = 4;
     private int weekendBadArrivals = 10;
     private int weekDayPassArrivals = 50; // average number of arriving cars per hour
@@ -196,8 +199,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
         colors[6] = "#e6e6e6";
         colors[7] = "#f2f2f2";
         // Here it's light!
-        colors[8] =  "#ffffff";
-        colors[9] =  "#ffffff";
+        colors[8] = "#ffffff";
+        colors[9] = "#ffffff";
         colors[10] = "#ffffff";
         colors[11] = "#ffffff";
         colors[12] = "#ffffff";
@@ -313,7 +316,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
             minute -= 60;
             // This is the firing method.
             hour++;
-            changes.firePropertyChange("Hour change",null,hour);
+            changes.firePropertyChange("Hour change", null, hour);
         }
         while (hour > 23) {
             hour -= 24;
@@ -326,6 +329,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     /**
      * We want to listen to our changed property.
+     *
      * @param l The property change listener
      */
     public void addPropertyListener(PropertyChangeListener l) {
@@ -357,7 +361,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         modelStats.put("Open Spots", String.valueOf(getNumberOfOpenSpots()));
         carTick();
         // Is notifyViews hier wel nodig?
-        //notifyViews();
+        notifyViews();
     }
 
 
@@ -371,6 +375,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
         addArrivingCars(numberOfCars, PASS);
         numberOfCars = getNumberOfCars(weekDayBadArrivals, weekendBadArrivals);
         addArrivingCars(numberOfCars, BAD);
+        numberOfCars = getNumberOfCars(weekDayResArrivals, weekendResArrivals);
+        addArrivingCars(numberOfCars, RES);
     }
 
     /**
@@ -451,11 +457,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 return false;
             }
         } else if (getDay().equals(sunday)) {
-            if (hour >= 14 && hour <= 18) {
-                return true;
-            } else {
-                return false;
-            }
+            return hour >= 14 && hour <= 18;
         }
         return false;
     }
@@ -469,11 +471,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return false;
     }
 
-    public boolean isNight() {
-        if (hour > 20 || hour < 7) {
-            return true;
-        }
-        return false;
+    private boolean isNight() {
+        return hour > 20 || hour < 7;
     }
 
     /**
@@ -536,6 +535,12 @@ public class CarParkModel extends AbstractModel implements Runnable {
                     entranceCarQueue.addCar(new BadParkerCar());
                 }
                 break;
+            case RES:
+                for (int i = 0; i < numberOfCars; i++) {
+                    Car car = new ResCar();
+                    setCarAt(getFirstFreeLocation(car), car);
+                }
+                break;
         }
     }
 
@@ -545,6 +550,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
      * @param car The car that leaves the spot.
      */
     private void carLeavesSpot(Car car) {
+        if (car instanceof ResCar) {
+            removeCarAt(car.getLocation());
+            setCarAt(car.getLocation(), new AdHocCar());
+            return;
+        }
         removeCarAt(car.getLocation());
         exitCarQueue.addCar(car);
     }

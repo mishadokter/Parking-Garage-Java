@@ -17,15 +17,15 @@ public class CarParkView extends AbstractView {
 
     private Dimension size;
     private Image carParkImage;
-    private JLabel steps;
     private BufferedImage adhoc;
     private BufferedImage pass;
     private BufferedImage empty;
     private BufferedImage passPlace;
     private BufferedImage badParker;
     private BufferedImage badParker2;
+    private BufferedImage resCar;
     private BufferedImage image;
-    private TexturePaint tp;
+    private String imageString;
 
     /**
      * Constructor for objects of class CarPark
@@ -33,12 +33,30 @@ public class CarParkView extends AbstractView {
     public CarParkView(CarParkModel model) {
         super(model);
         size = new Dimension(0, 0);
-        steps = new JLabel();
-        add(steps);
-        steps.setBounds(410, 10, 70, 30);
         loadImages();
         image = empty;
+        imageString = "empty";
 
+    }
+
+    public static BufferedImage rotate(BufferedImage image, double angle) {
+        double sin = Math.abs(Math.sin(angle)), cos = Math.abs(Math.cos(angle));
+        int w = image.getWidth(), h = image.getHeight();
+        int neww = (int) Math.floor(w * cos + h * sin), newh = (int) Math.floor(h * cos + w * sin);
+        GraphicsConfiguration gc = getDefaultConfiguration();
+        BufferedImage result = gc.createCompatibleImage(neww, newh, Transparency.TRANSLUCENT);
+        Graphics2D g = result.createGraphics();
+        g.translate((neww - w) / 2, (newh - h) / 2);
+        g.rotate(angle, w / 2, h / 2);
+        g.drawRenderedImage(image, null);
+        g.dispose();
+        return result;
+    }
+
+    private static GraphicsConfiguration getDefaultConfiguration() {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        return gd.getDefaultConfiguration();
     }
 
     /**
@@ -74,9 +92,6 @@ public class CarParkView extends AbstractView {
     2 - place taken by pass holder
     5 - empty place for pass holders*/
     public void updateView() {
-        steps.setText(model.getSteps());
-        //steps.setText(model.getQueue().toString());
-        //model.getQueue();
         // Create a new car park image if the size has changed.
         if (!size.equals(getSize())) {
             size = getSize();
@@ -92,30 +107,37 @@ public class CarParkView extends AbstractView {
                     switch (state) {
                         case 0:
                             image = empty;
+                            imageString = "empty";
                             break;
                         case 1:
                             image = adhoc;
-                            tp = new TexturePaint(adhoc, new Rectangle(0, 0, 20, 10));
+                            imageString = "adhoc";
                             break;
                         case 2:
-                            tp = new TexturePaint(pass, new Rectangle(-5, 0, pass.getWidth(), pass.getHeight()));
                             image = pass;
+                            imageString = "pass";
                             break;
                         case 5:
                             image = passPlace;
+                            imageString = "passPlace";
                             break;
                         case 6:
                             image = badParker;
+                            imageString = "badParker";
                             break;
                         case 7:
                             image = badParker2;
+                            imageString = "badParker2";
+                            break;
+                        case 8:
+                            image = resCar;
+                            imageString = "resCar";
                             break;
                         default:
-                            tp = null;
                             image = empty;
+                            imageString = "empty";
                     }
                     doDrawing(graphics, location);
-
                 }
             }
         }
@@ -123,40 +145,34 @@ public class CarParkView extends AbstractView {
     }
 
     /**
-     * Paint a place on this car park view in a given color.
-     */
-    private void drawPlace(Graphics graphics, Location location, Color color) {
-        graphics.setColor(color);
-        graphics.fillRect(location.getFloor() * 260 + (1 + (int) Math.floor(location.getRow() * 0.5)) * 75 + (location.getRow() % 2) * 20,
-                60 + location.getPlace() * 10,
-                20 - 1, 10 - 1); // TODO use dynamic size or constants*/
-    }
-
+     * Paint a place on this car park view in a specific image.
+     **/
     private void doDrawing(Graphics g, Location location) {
-
         if ((location.getRow() + 2) % 2 == 0) {
-            AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
-            tx.translate(-image.getWidth(null), 0);
+            if (imageString.equals("badParker2")) {
+                image = badParker;
+            }
+            if (imageString.equals("badParker")) {
+                image = badParker2;
+            }
+            AffineTransform tx = AffineTransform.getScaleInstance(-1, -1);
+            tx.translate(-image.getWidth(null), -image.getHeight(null));
             AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
             image = op.filter(image, null);
         }
 
-        g.drawImage(image, location.getFloor() * 260 + (1 + (int) Math.floor(location.getRow() * 0.5)) * 75 + (location.getRow() % 2) * 20, 60 + location.getPlace() * 10, image.getWidth(), image.getHeight(), Color.decode("#5c5c5c"), null);
-
-        /*Graphics2D g2d = (Graphics2D) g.create();
-
-        g2d.setPaint(tp);
-        g2d.fillRect(location.getFloor() * 260 + (1 + (int) Math.floor(location.getRow() * 0.5)) * 75 + (location.getRow() % 2) * 20, 60 + location.getPlace() * 10, 20 - 1, 10 - 1);*/
+        g.drawImage(image, location.getFloor() * 260 + (1 + (int) Math.floor(location.getRow() * 0.5)) * 75 + (location.getRow() % 2) * 26, 60 + location.getPlace() * 13, 26, 13, Color.decode("#5c5c5c"), null);
     }
 
     private void loadImages() {
         try {
-            adhoc = ImageIO.read(getClass().getResource("resources/AdhocCar.png"));
-            pass = ImageIO.read(getClass().getResource("resources/PassCar2.png"));
+            adhoc = ImageIO.read(getClass().getResource("resources/RedCar.png"));
+            pass = ImageIO.read(getClass().getResource("resources/BlueCar.png"));
             empty = ImageIO.read(getClass().getResource("resources/Empty.png"));
             passPlace = ImageIO.read(getClass().getResource("resources/PassPlace.png"));
             badParker = ImageIO.read(getClass().getResource("resources/BadParker.png"));
             badParker2 = ImageIO.read(getClass().getResource("resources/BadParker2.png"));
+            resCar = ImageIO.read(getClass().getResource("resources/ResCar.png"));
         } catch (IOException ex) {
         }
     }
