@@ -19,10 +19,10 @@ public abstract class DefaultView {
     private static Scene defaultScene;
         private void initAndShowGUI() throws IOException {
             // This method is invoked on the EDT thread
-            JFrame frame = new JFrame("Swing and JavaFX");
+            JFrame frame = new JFrame("Managemant Panel");
             final JFXPanel fxPanel = new JFXPanel();
             frame.add(fxPanel);
-            frame.setSize(950, 580);
+            frame.setSize(1000, 600);
             frame.setVisible(true);
             Parent root = FXMLLoader.load(getClass().getResource("../includes/designs/" + getLayoutFile()));
             defaultScene = new Scene(root);
