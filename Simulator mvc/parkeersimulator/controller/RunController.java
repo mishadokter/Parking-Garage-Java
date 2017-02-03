@@ -11,11 +11,7 @@ import java.util.ArrayList;
 
 public class RunController extends AbstractController implements ActionListener {
 
-    private JButton stepDay;
-    private JButton stepWeek;
-    private JButton startSteps;
-    private JButton stopSteps;
-    private JButton settings;
+    private JButton stepDay, stepWeek, startSteps, stopSteps, settings, guiButton, resetButton;
     private ArrayList<JButton> buttons;
 
     public RunController(CarParkModel model) {
@@ -31,7 +27,10 @@ public class RunController extends AbstractController implements ActionListener 
         stopSteps.addActionListener(this);
         settings = new JButton("Management");
         settings.addActionListener(this);
-
+        guiButton = new JButton("Settings");
+        guiButton.addActionListener(this);
+        resetButton = new JButton("Reset");
+        resetButton.addActionListener(this);
 
         buttons = new ArrayList<>();
         buttons.add(stepDay);
@@ -44,11 +43,15 @@ public class RunController extends AbstractController implements ActionListener 
         add(startSteps);
         add(stopSteps);
         add(settings);
+        add(guiButton);
+        add(resetButton);
         stepDay.setBounds(50, 10, 70, 30);
         stepWeek.setBounds(140, 10, 70, 30);
         startSteps.setBounds(230, 10, 70, 30);
         stopSteps.setBounds(320, 10, 70, 30);
-        settings.setBounds(410, 10, 140, 30);
+        settings.setBounds(410, 10, 110, 30);
+        guiButton.setBounds(540, 10, 70, 30);
+        resetButton.setBounds(630, 10, 70, 30);
 
         setVisible(true);
 

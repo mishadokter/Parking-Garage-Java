@@ -8,6 +8,8 @@ import parkeersimulator.view.*;
 
 import javax.swing.*;
 import javax.swing.plaf.LayerUI;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -76,8 +78,9 @@ public class CarParkSim implements PropertyChangeListener {
         // Adding the new layer to our frame.
         screen.add(jLayer);
         screen.setSize(1100, 650);
-        screen.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        screen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         screen.setVisible(true);
+
     }
 
     /**

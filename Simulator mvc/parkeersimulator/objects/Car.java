@@ -13,9 +13,7 @@ public abstract class Car {
     /**
      * Constructor for objects of class Car
      */
-    public Car() {
 
-    }
 
     public Location getLocation() {
         return location;
@@ -34,7 +32,7 @@ public abstract class Car {
     }
 
     public void setTotalMinutes() {
-        totalMinutes =
+       // totalMinutes =
     }
 
     public int getTotalMinutes() {

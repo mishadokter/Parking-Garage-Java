@@ -17,7 +17,9 @@ import java.util.Set;
 public class StatsView extends AbstractView{
 
     private JPanel carStats;
+    private Thread thread;
     private Map<String, JLabel> statDisplay;
+    private boolean runView = true;
     public StatsView(CarParkModel model){
         super(model);
         statDisplay = new HashMap<>();
@@ -28,10 +30,10 @@ public class StatsView extends AbstractView{
         add(carStats);
         //carStats.setBackground(Color.BLACK);
         setVisible(true);
-        Thread thread = new Thread(){
+        thread = new Thread(){
             public void run(){
                 try {
-                    while (true) {
+                    while (runView) {
                         Set set = model.getStats().entrySet();
                         Iterator i = set.iterator();
                         while(i.hasNext()) {
@@ -59,5 +61,13 @@ public class StatsView extends AbstractView{
             }
         };
         thread.start();
+    }
+    public void stopThread(){
+        runView = false;
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

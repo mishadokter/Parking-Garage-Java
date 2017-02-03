@@ -31,7 +31,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private CarQueue paymentCarQueue;
     private CarQueue exitCarQueue;
     private Garage garage;
-    private TicketMachine ticketMachine;
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
     private String[] colors;
     private int day = 0;
@@ -45,7 +44,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private Map<String, Integer> modelSettings;
     private int minutesToRun;
     private TreeMap<String, String> modelStats;
-    private boolean run;
+    public boolean run;
 
     // Fields from SimulatorView
     private int numberOfFloors = 3;
@@ -64,8 +63,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         entrancePassQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
-        ticketMachine = new TicketMachine(this);
-        setNumberOfOpenSpots();
+       // ticketMachine = new TicketMachine(this);
         run = false;
         numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
         cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
@@ -96,15 +94,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
         modelSettings.put("paymentSpeed", paymentSpeed);
         modelSettings.put("exitSpeed", exitSpeed);
         modelSettings.put("tickPause", tickPause);
-        modelSettings.put("steps", steps);
-        // No need for days and Hour here, set's the time always to start (0)!
-        //modelSettings.put("day", day);
-        //modelSettings.put("hour", hour);
-        //modelSettings.put("minute", minute);
-        //modelSettings.put("numberOfOpenSpots",  numberOfOpenSpots);
         setReferences();
     }
-
     /*
     Deze functie set de referenties naar die van de hashmap.
      */
@@ -123,13 +114,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         paymentSpeed = modelSettings.get("paymentSpeed");
         exitSpeed = modelSettings.get("exitSpeed");
         tickPause = modelSettings.get("tickPause");
-        steps = modelSettings.get("steps");
-        // If there's no time added to the list, you can't get it.
-        //day = modelSettings.get("day");
-        //hour = modelSettings.get("hour");
-        //minute = modelSettings.get("minute");
-        //numberOfOpenSpots =     modelSettings.get("numberOfOpenSpots");
-    }
+  }
 
     public Map<String, Integer> getOptions() {
         return modelSettings;
@@ -187,17 +172,17 @@ public class CarParkModel extends AbstractModel implements Runnable {
      */
     private void fillColors() {
         colors = new String[24];
-        colors[0] = "#999999";
-        colors[1] = "#a6a6a6";
-        colors[2] = "#b3b3b3";
-        colors[3] = "#bfbfbf";
-        colors[4] = "#cccccc";
-        colors[5] = "#d9d9d9";
-        colors[6] = "#e6e6e6";
-        colors[7] = "#f2f2f2";
+        colors[0] = "#000000";
+        colors[1] = "#000000";
+        colors[2] = "#595959";
+        colors[3] = "#8c8c8c";
+        colors[4] = "#bfbfbf";
+        colors[5] = "#e6e6e6";
+        colors[6] = "#f2f2f2";
         // Here it's light!
-        colors[8] =  "#ffffff";
-        colors[9] =  "#ffffff";
+        colors[7] = "#ffffff";
+        colors[8] = "#ffffff";
+        colors[9] = "#ffffff";
         colors[10] = "#ffffff";
         colors[11] = "#ffffff";
         colors[12] = "#ffffff";
@@ -205,14 +190,14 @@ public class CarParkModel extends AbstractModel implements Runnable {
         colors[14] = "#ffffff";
         colors[15] = "#ffffff";
         colors[16] = "#ffffff";
-        // It's going dark again.
         colors[17] = "#f2f2f2";
         colors[18] = "#e6e6e6";
         colors[19] = "#d9d9d9";
-        colors[20] = "#cccccc";
-        colors[21] = "#bfbfbf";
-        colors[22] = "#b3b3b3";
-        colors[23] = "#a6a6a6";
+        // It's dr again!
+        colors[20] = "#bfbfbf";
+        colors[21] = "#8c8c8c";
+        colors[22] = "#262626";
+        colors[23] = "#000000";
     }
 
     public String getColor() {
@@ -312,8 +297,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         while (minute > 59) {
             minute -= 60;
             // This is the firing method.
-            hour++;
-            changes.firePropertyChange("Hour change",null,hour);
+            changes.firePropertyChange("Hour change",minute,hour++);
         }
         while (hour > 23) {
             hour -= 24;
@@ -344,10 +328,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         carsLeaving();
     }
 
-    /**
-     * Update all views.
-     */
-    private void updateViews() {
+    private void updateStats(){
         modelStats.put("Time", String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":00");
         modelStats.put("Day", getDay());
         modelStats.put("Entrance Queue", String.valueOf(entranceCarQueue.carsInQueue()));
@@ -355,9 +336,15 @@ public class CarParkModel extends AbstractModel implements Runnable {
         modelStats.put("Payment Queue", String.valueOf(paymentCarQueue.carsInQueue()));
         modelStats.put("Exit Queue", String.valueOf(exitCarQueue.carsInQueue()));
         modelStats.put("Open Spots", String.valueOf(getNumberOfOpenSpots()));
+    }
+
+    /**
+     * Update all views.
+     */
+    private void updateViews(){
+        updateStats();
         carTick();
-        // Is notifyViews hier wel nodig?
-        //notifyViews();
+        notifyViews();
     }
 
 
@@ -401,8 +388,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
             if (car.getHasToPay()) {
                 car.setIsPaying(true);
                 paymentCarQueue.addCar(car);
-                System.out.println("## Time left: " + car.getTotalMinutes() + " ## ");
-
             } else {
                 carLeavesSpot(car);
             }
@@ -418,11 +403,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         int i = 0;
         while (paymentCarQueue.carsInQueue() > 0 && i < paymentSpeed) {
             Car car = paymentCarQueue.removeCar();
-            int ml = car.getMinutesLeft();
-            System.out.print("A Car has paid");
-            paymentCarQueue.removeCar();
-            ticketMachine.normalPay();
-
+            // TODO Handle payment.
             carLeavesSpot(car);
             i++;
         }
