@@ -426,7 +426,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
             Car car = paymentCarQueue.removeCar();
             int ml = car.getMinutesLeft();
             System.out.print("A Car has paid");
-            paymentCarQueue.removeCar();
             ticketMachine.normalPay();
 
             carLeavesSpot(car);
@@ -822,15 +821,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Gets the amount of steps that the simulation needs to run.
-     *
-     * @return The amount of steps that the simulation needs to run.
-     */
-    public String getSteps() {
-        return Integer.toString(steps);
     }
 
 
