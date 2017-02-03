@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 
@@ -13,6 +14,11 @@ import java.io.IOException;
  */
 
 public class ManagementView extends DefaultView {
+
+    @FXML
+    private PieChart piechart;
+    @FXML
+    private BarChart barChart;
 
     public ManagementView() throws IOException {
         super();
@@ -29,42 +35,35 @@ public class ManagementView extends DefaultView {
     }
 
     @FXML
-    private PieChart piechart;
-
-    @FXML
-    private BarChart barChart;
-
-
-
-    @FXML
     private void handleButtonBarChart(ActionEvent event) {
 
-        String monday       = "Monday";
-        String tuesday      = "Tuesday";
-        String wednesday    = "Wednesday";
-        String thursday     = "Thursday";
-        String friday       = "Friday";
-        String saturday     = "Saturday";
-        String sunday       = "Sunday";
+        String monday = "Monday";
+        String tuesday = "Tuesday";
+        String wednesday = "Wednesday";
+        String thursday = "Thursday";
+        String friday = "Friday";
+        String saturday = "Saturday";
+        String sunday = "Sunday";
 
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();
-        ObservableList<XYChart.Series<String, Number>> barChartData = FXCollections.observableArrayList();
-        final BarChart<String, Number> bc =  new BarChart<String, Number>(xAxis, yAxis);
-        xAxis.setTickLabelRotation(90);
+        final BarChart<String, Number> bc = new BarChart<>(xAxis, yAxis);
+        bc.setTitle("Country Summary");
+        xAxis.setLabel("Country");
+        yAxis.setLabel("Value");
 
         XYChart.Series series1 = new XYChart.Series();
-        series1.setName("Number of cars");
-        series1.getData().add(new XYChart.Data(monday, 758));
-        series1.getData().add(new XYChart.Data(tuesday, 468));
-        series1.getData().add(new XYChart.Data(wednesday, 336));
-        series1.getData().add(new XYChart.Data(thursday, 970));
-        series1.getData().add(new XYChart.Data(friday, 1061));
-        series1.getData().add(new XYChart.Data(saturday, 1834));
-        series1.getData().add(new XYChart.Data(sunday, 1190));
+        series1.setName("2003");
+        series1.getData().add(new XYChart.Data(monday, 25601.34));
+        series1.getData().add(new XYChart.Data(tuesday, 20148.82));
+        series1.getData().add(new XYChart.Data(wednesday, 10000));
+        series1.getData().add(new XYChart.Data(thursday, 35407.15));
+        series1.getData().add(new XYChart.Data(friday, 12000));
 
-        barChartData.add(series1);
-        barChart.setData(barChartData);
+
+        bc.getData().addAll(series1);
+        barChart.setData(bc.getData());
+        barChart.setAnimated(false);
         barChart.setTitle("Daily car entrances");
         barChart.setVisible(true);
         piechart.setVisible(false); // Maak de piechart invisible
