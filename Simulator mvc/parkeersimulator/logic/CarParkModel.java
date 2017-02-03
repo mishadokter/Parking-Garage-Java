@@ -383,7 +383,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 i < enterSpeed) {
             Car car = queue.removeCar();
             Location freeLocation = getFirstFreeLocation(car);
-            setCarAt(freeLocation, car);
+            setStateAt(freeLocation, car);
             i++;
         }
     }
@@ -528,7 +528,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
             case RES:
                 for (int i = 0; i < numberOfCars; i++) {
                     Car car = new ResCar();
-                    setCarAt(getFirstFreeLocation(car), car);
+                    setStateAt(getFirstFreeLocation(car), car);
                 }
                 break;
         }
@@ -542,7 +542,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private void carLeavesSpot(Car car) {
         if (car instanceof ResCar) {
             removeCarAt(car.getLocation());
-            setCarAt(car.getLocation(), new AdHocCar());
+            setStateAt(car.getLocation(), new AdHocCar());
             return;
         }
         removeCarAt(car.getLocation());
@@ -622,7 +622,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     2 - place taken by pass holder
     5 - empty place for pass holders
     6 - taken by a bad parker*/
-    public boolean setCarAt(Location location, Car car) {
+    public boolean setStateAt(Location location, Car car) {
         if (!locationIsValid(location)) {
             return false;
         }
@@ -647,11 +647,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
                 car.setLocation(location);
                 if (((BadParkerCar) car).getSecondLocation().getPlace() < car.getLocation().getPlace()) {
-                    garage.setCarAt(location, ((BadParkerCar) car).getState2());
-                    garage.setCarAt(((BadParkerCar) car).getSecondLocation(), car.getState());
+                    garage.setStateAt(location, ((BadParkerCar) car).getState2());
+                    garage.setStateAt(((BadParkerCar) car).getSecondLocation(), car.getState());
                 } else {
-                    garage.setCarAt(location, car.getState());
-                    garage.setCarAt(((BadParkerCar) car).getSecondLocation(), ((BadParkerCar) car).getState2());
+                    garage.setStateAt(location, car.getState());
+                    garage.setStateAt(((BadParkerCar) car).getSecondLocation(), ((BadParkerCar) car).getState2());
                 }
                 numberOfOpenSpots -= 2;
                 return true;
@@ -661,7 +661,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
             }
             cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
             car.setLocation(location);
-            garage.setCarAt(location, car.getState());
+            garage.setStateAt(location, car.getState());
             numberOfOpenSpots--;
             return true;
         }
