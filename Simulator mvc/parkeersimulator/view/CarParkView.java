@@ -137,8 +137,8 @@ public class CarParkView extends AbstractView {
      */
     private void loadImages() {
         try {
-            adhoc = ImageIO.read(getClass().getResource("resources/RedCar.png"));
-            pass = ImageIO.read(getClass().getResource("resources/BlueCar.png"));
+            adhoc = ImageIO.read(getClass().getResource("resources/AdHocCar.png"));
+            pass = ImageIO.read(getClass().getResource("resources/PassCar.png"));
             empty = ImageIO.read(getClass().getResource("resources/Empty.png"));
             passPlace = ImageIO.read(getClass().getResource("resources/PassPlace.png"));
             badParker = ImageIO.read(getClass().getResource("resources/BadParker.png"));
