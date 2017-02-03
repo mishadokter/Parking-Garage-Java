@@ -31,10 +31,6 @@ public abstract class Car {
         this.minutesLeft = minutesLeft;
     }
 
-    public void setTotalMinutes() {
-       // totalMinutes =
-    }
-
     public int getTotalMinutes() {
         return totalMinutes;
     }
@@ -65,6 +61,6 @@ public abstract class Car {
 
     public void setState(int state) {
         this.state = state;
-        System.out.println("# State is: "+state);
+        System.out.println("# State is: " + state);
     }
 }

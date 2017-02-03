@@ -15,8 +15,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private static final String AD_HOC = "1";
     private static final String PASS = "2";
     private static final String BAD = "3";
+    private static final String RES = "4";
     private int weekDayArrivals = 100; // average number of arriving cars per hour
     private int weekendArrivals = 200; // average number of arriving cars per hour
+    private int weekDayResArrivals = 5; // average number of arriving cars per hour
+    private int weekendResArrivals = 15; // average number of arriving cars per hour
     private int weekDayBadArrivals = 4;
     private int weekendBadArrivals = 10;
     private int weekDayPassArrivals = 50; // average number of arriving cars per hour
@@ -31,6 +34,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private CarQueue paymentCarQueue;
     private CarQueue exitCarQueue;
     private Garage garage;
+    private TicketMachine ticketMachine;
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
     private String[] colors;
     private int day = 0;
@@ -44,7 +48,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private Map<String, Integer> modelSettings;
     private int minutesToRun;
     private TreeMap<String, String> modelStats;
-    public boolean run;
+    private boolean run;
 
     // Fields from SimulatorView
     private int numberOfFloors = 3;
@@ -63,7 +67,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
         entrancePassQueue = new CarQueue();
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
-       // ticketMachine = new TicketMachine(this);
+        ticketMachine = new TicketMachine(this);
+        setNumberOfOpenSpots();
         run = false;
         numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
         cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
@@ -172,15 +177,15 @@ public class CarParkModel extends AbstractModel implements Runnable {
      */
     private void fillColors() {
         colors = new String[24];
-        colors[0] = "#000000";
-        colors[1] = "#000000";
-        colors[2] = "#595959";
-        colors[3] = "#8c8c8c";
-        colors[4] = "#bfbfbf";
-        colors[5] = "#e6e6e6";
-        colors[6] = "#f2f2f2";
+        colors[0] = "#999999";
+        colors[1] = "#a6a6a6";
+        colors[2] = "#b3b3b3";
+        colors[3] = "#bfbfbf";
+        colors[4] = "#cccccc";
+        colors[5] = "#d9d9d9";
+        colors[6] = "#e6e6e6";
+        colors[7] = "#f2f2f2";
         // Here it's light!
-        colors[7] = "#ffffff";
         colors[8] = "#ffffff";
         colors[9] = "#ffffff";
         colors[10] = "#ffffff";
@@ -190,14 +195,14 @@ public class CarParkModel extends AbstractModel implements Runnable {
         colors[14] = "#ffffff";
         colors[15] = "#ffffff";
         colors[16] = "#ffffff";
+        // It's going dark again.
         colors[17] = "#f2f2f2";
         colors[18] = "#e6e6e6";
         colors[19] = "#d9d9d9";
-        // It's dr again!
-        colors[20] = "#bfbfbf";
-        colors[21] = "#8c8c8c";
-        colors[22] = "#262626";
-        colors[23] = "#000000";
+        colors[20] = "#cccccc";
+        colors[21] = "#bfbfbf";
+        colors[22] = "#b3b3b3";
+        colors[23] = "#a6a6a6";
     }
 
     public String getColor() {
@@ -297,7 +302,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
         while (minute > 59) {
             minute -= 60;
             // This is the firing method.
-            changes.firePropertyChange("Hour change",minute,hour++);
+            hour++;
+            changes.firePropertyChange("Hour change", null, hour);
         }
         while (hour > 23) {
             hour -= 24;
@@ -310,6 +316,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     /**
      * We want to listen to our changed property.
+     *
      * @param l The property change listener
      */
     public void addPropertyListener(PropertyChangeListener l) {
@@ -358,6 +365,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
         addArrivingCars(numberOfCars, PASS);
         numberOfCars = getNumberOfCars(weekDayBadArrivals, weekendBadArrivals);
         addArrivingCars(numberOfCars, BAD);
+        numberOfCars = getNumberOfCars(weekDayResArrivals, weekendResArrivals);
+        addArrivingCars(numberOfCars, RES);
     }
 
     /**
@@ -388,6 +397,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
             if (car.getHasToPay()) {
                 car.setIsPaying(true);
                 paymentCarQueue.addCar(car);
+                System.out.println("## Time left: " + car.getTotalMinutes() + " ## ");
+
             } else {
                 carLeavesSpot(car);
             }
@@ -403,7 +414,10 @@ public class CarParkModel extends AbstractModel implements Runnable {
         int i = 0;
         while (paymentCarQueue.carsInQueue() > 0 && i < paymentSpeed) {
             Car car = paymentCarQueue.removeCar();
-            // TODO Handle payment.
+            int ml = car.getMinutesLeft();
+            System.out.print("A Car has paid");
+            ticketMachine.normalPay();
+
             carLeavesSpot(car);
             i++;
         }
@@ -432,11 +446,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 return false;
             }
         } else if (getDay().equals(sunday)) {
-            if (hour >= 14 && hour <= 18) {
-                return true;
-            } else {
-                return false;
-            }
+            return hour >= 14 && hour <= 18;
         }
         return false;
     }
@@ -450,11 +460,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return false;
     }
 
-    public boolean isNight() {
-        if (hour > 20 || hour < 7) {
-            return true;
-        }
-        return false;
+    private boolean isNight() {
+        return hour > 20 || hour < 7;
     }
 
     /**
@@ -517,6 +524,12 @@ public class CarParkModel extends AbstractModel implements Runnable {
                     entranceCarQueue.addCar(new BadParkerCar());
                 }
                 break;
+            case RES:
+                for (int i = 0; i < numberOfCars; i++) {
+                    Car car = new ResCar();
+                    setCarAt(getFirstFreeLocation(car), car);
+                }
+                break;
         }
     }
 
@@ -526,6 +539,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
      * @param car The car that leaves the spot.
      */
     private void carLeavesSpot(Car car) {
+        if (car instanceof ResCar) {
+            removeCarAt(car.getLocation());
+            setCarAt(car.getLocation(), new AdHocCar());
+            return;
+        }
         removeCarAt(car.getLocation());
         exitCarQueue.addCar(car);
     }
@@ -793,15 +811,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
             return false;
         }
         return true;
-    }
-
-    /**
-     * Gets the amount of steps that the simulation needs to run.
-     *
-     * @return The amount of steps that the simulation needs to run.
-     */
-    public String getSteps() {
-        return Integer.toString(steps);
     }
 
 

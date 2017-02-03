@@ -9,13 +9,8 @@ import parkeersimulator.view.*;
 import javax.swing.*;
 import javax.swing.plaf.LayerUI;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
-import parkeersimulator.controller.*;
-import parkeersimulator.logic.*;
-import parkeersimulator.view.*;
 
 /**
  * This class creates all needed objects to start.
@@ -39,8 +34,8 @@ public class CarParkSim implements PropertyChangeListener {
     public CarParkSim() {
         // Create the model.
         carParkModel = new CarParkModel();
-            // Add a listener. if the're is a bean fired. we want to do something with this.
-            carParkModel.addPropertyListener(this);
+        // Add a listener. if the're is a bean fired. we want to do something with this.
+        carParkModel.addPropertyListener(this);
         colorOverlay = new ColorOverlay(carParkModel);
         // Create the run controller.
         runController = new RunController(carParkModel);
@@ -65,28 +60,28 @@ public class CarParkSim implements PropertyChangeListener {
         JPanel jPanel = new JPanel(null);
         // Adding our loose panels on our panel above.
         jPanel.add(captionView);
-        captionView.setBounds(850,362,200,200);
+        captionView.setBounds(850, 362, 200, 200);
         jPanel.add(runController);
-        runController.setBounds(0,550,800,500);
+        runController.setBounds(0, 550, 800, 500);
         jPanel.add(carParkView);
-        carParkView.setBounds(10,10,800,500);
+        carParkView.setBounds(10, 10, 800, 500);
         jPanel.add(statView);
-        statView.setBounds(850,62,200,500);
+        statView.setBounds(850, 62, 200, 500);
         // Creating a new layer and layer UI.
         layerUI = colorOverlay;
         jLayer = new JLayer<>(jPanel, layerUI);
         // Adding the new layer to our frame.
         screen.add(jLayer);
         screen.setSize(1100, 650);
-        screen.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        screen.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         screen.setVisible(true);
-
     }
 
     /**
      * Overriding a repaint method. Because we want to listen to the fired beans from the model.
+     *
      * @param evt fired beans from the model.
-      */
+     */
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         screen.repaint();
