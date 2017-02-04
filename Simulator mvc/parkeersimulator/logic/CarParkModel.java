@@ -12,10 +12,10 @@ import parkeersimulator.objects.*;
  */
 public class CarParkModel extends AbstractModel implements Runnable {
 
-    private static final String AD_HOC = "1";
-    private static final String PASS = "2";
-    private static final String BAD = "3";
-    private static final String RES = "4";
+    private static final int AD_HOC = 1;
+    private static final int PASS = 2;
+    private static final int BAD = 3;
+    private static final int RES = 4;
     private int weekDayArrivals = 100; // average number of arriving cars per hour
     private int weekendArrivals = 200; // average number of arriving cars per hour
     private int weekDayResArrivals = 5; // average number of arriving cars per hour
@@ -29,10 +29,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private int paymentSpeed = 7; // number of cars that can pay per minute
     private int exitSpeed = 5; // number of cars that can leave per minute
 
-    private CarQueue entranceCarQueue;
-    private CarQueue entrancePassQueue;
-    private CarQueue paymentCarQueue;
-    private CarQueue exitCarQueue;
+    private CarQueue entranceCarQueue, entrancePassQueue, paymentCarQueue, exitCarQueue;
     private Garage garage;
     private TicketMachine ticketMachine;
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
@@ -41,10 +38,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private int hour = 0;
     private int minute = 0;
     private int tickPause = 10;
-    private int steps = 0;
 
-    private ArrayList<Location> spots;
-    private ArrayList<Location> passHolders;
+    private ArrayList<Location> spots, passHolders;
     private Map<String, Integer> modelSettings;
     private int minutesToRun;
     private TreeMap<String, String> modelStats;
@@ -78,7 +73,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
         garage = new Garage(this);
         setPassSpot();
         setDefaults();
-        fillColors();
     }
 
     /*
@@ -125,10 +119,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return modelSettings;
     }
 
-    public int getOption(String ref) {
-        return modelSettings.get(ref);
-    }
-
     public void setOption(String ref, int val) {
         modelSettings.put(ref, val);
     }
@@ -170,58 +160,10 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return dayName;
     }
 
-    /**
-     * A method to fill an array of strings.
-     * In this case each key represents the current hour in the sim.
-     * TODO make the switch between dark and light more even.
-     */
-    private void fillColors() {
-        colors = new String[24];
-        colors[0] = "#999999";
-        colors[1] = "#a6a6a6";
-        colors[2] = "#b3b3b3";
-        colors[3] = "#bfbfbf";
-        colors[4] = "#cccccc";
-        colors[5] = "#d9d9d9";
-        colors[6] = "#e6e6e6";
-        colors[7] = "#f2f2f2";
-        // Here it's light!
-        colors[8] = "#ffffff";
-        colors[9] = "#ffffff";
-        colors[10] = "#ffffff";
-        colors[11] = "#ffffff";
-        colors[12] = "#ffffff";
-        colors[13] = "#ffffff";
-        colors[14] = "#ffffff";
-        colors[15] = "#ffffff";
-        colors[16] = "#ffffff";
-        // It's going dark again.
-        colors[17] = "#f2f2f2";
-        colors[18] = "#e6e6e6";
-        colors[19] = "#d9d9d9";
-        colors[20] = "#cccccc";
-        colors[21] = "#bfbfbf";
-        colors[22] = "#b3b3b3";
-        colors[23] = "#a6a6a6";
-    }
-
-    public String getColor() {
-        String newColor = colors[getHour()];
-        return newColor;
-    }
-
     public int getHour() {
         return hour;
     }
 
-    public String getMinute() {
-        String minuteString = Integer.toString(minute);
-        if (minute < 10) {
-            return minuteString = "0" + minuteString;
-        } else {
-            return minuteString;
-        }
-    }
 
     public int getLocInfo(Location location) {
         return garage.getStateAt(location);
@@ -246,13 +188,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private void setPassSpot() {
         for (int i = 0; i < numberOfPasses; i++) {
             garage.setStateAt(spots.get(i), 5);
-            passHolders.add(spots.get(i));
-        }
-    }
-
-    private void updatePassSpot() {
-        passHolders.clear();
-        for (int i = 0; i < numberOfPasses; i++) {
             passHolders.add(spots.get(i));
         }
     }
@@ -289,7 +224,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
             e.printStackTrace();
         }
         handleEntrance();
-        steps++;
     }
 
     /**
@@ -506,7 +440,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
      * @param numberOfCars Number of cars entering per step/minute.
      * @param type         The type of the car.
      */
-    private void addArrivingCars(int numberOfCars, String type) {
+    private void addArrivingCars(int numberOfCars, int type) {
         // Add the cars to the back of the queue.
         switch (type) {
             case AD_HOC:
@@ -548,11 +482,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
         exitCarQueue.addCar(car);
     }
 
-    // Methods from SimulatorView
-
     /**
      * Sets the total number of open spots in the car park.
-     *
      * @return The total number of open spots in the car park.
      */
     private int setNumberOfOpenSpots() {
@@ -561,7 +492,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     /**
      * Gets the number of floors in the car park.
-     *
      * @return The number of floors in the car park.
      */
     public int getNumberOfFloors() {
@@ -570,7 +500,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     /**
      * Gets the number of rows in the car park on each floor.
-     *
      * @return The number of rows in the car park on each floor.
      */
     public int getNumberOfRows() {
@@ -579,16 +508,14 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     /**
      * Gets the number of places in the car park on each row.
-     *
      * @return The number of places in the car park on each row.
-     */
+     * */
     public int getNumberOfPlaces() {
         return numberOfPlaces;
     }
 
     /**
      * Gets the number of open spots in the car park.
-     *
      * @return The number of open spots in the car park.
      */
     public int getNumberOfOpenSpots() {
@@ -633,7 +560,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 }
                 cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
                 car.setLocation(location);
-                garage.setCarAt(location, car, car.getState());
+                garage.setStateAt(location, car.getState());
                 numberOfOpenSpots--;
                 return true;
             }
@@ -646,11 +573,11 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
                 car.setLocation(location);
                 if (((BadParkerCar) car).getSecondLocation().getPlace() < car.getLocation().getPlace()) {
-                    garage.setCarAt(location, car, ((BadParkerCar) car).getState2());
-                    garage.setCarAt(((BadParkerCar) car).getSecondLocation(), car, car.getState());
+                    garage.setStateAt(location, ((BadParkerCar) car).getState2());
+                    garage.setStateAt(((BadParkerCar) car).getSecondLocation(), car.getState());
                 } else {
-                    garage.setCarAt(location, car, car.getState());
-                    garage.setCarAt(((BadParkerCar) car).getSecondLocation(), car, ((BadParkerCar) car).getState2());
+                    garage.setStateAt(location, car.getState());
+                    garage.setStateAt(((BadParkerCar) car).getSecondLocation(), ((BadParkerCar) car).getState2());
                 }
                 numberOfOpenSpots -= 2;
                 return true;
@@ -660,7 +587,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
             }
             cars[location.getFloor()][location.getRow()][location.getPlace()] = car;
             car.setLocation(location);
-            garage.setCarAt(location, car, car.getState());
+            garage.setStateAt(location, car.getState());
             numberOfOpenSpots--;
             return true;
         }
@@ -796,7 +723,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     /**
      * Check if the given location is a valid location in the car park.
-     *
      * @param location The location to check.
      * @return If it is valid or not. ( true / false )
      */
@@ -813,7 +739,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return true;
     }
 
-
     @Override
     /**
      * Starts the simulation.
@@ -828,9 +753,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 e.printStackTrace();
             }
         }
-
         run = false;
-
         minutesToRun = 0;
     }
 }

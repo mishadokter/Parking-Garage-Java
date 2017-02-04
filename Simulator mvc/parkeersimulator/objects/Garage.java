@@ -40,23 +40,8 @@ public class Garage {
         return state;
     }
 
-    public void setCarAt(Location location, Car car, int state) {
-        String loc = location.toString();
-
-        cars.put(loc, car);
-        this.state.put(loc, state);
-    }
-
-    public void setCarAt(Location location, Car car) {
-        String loc = location.toString();
-
-        cars.put(loc, car);
-        this.state.put(loc, 0);
-    }
-
     public void setStateAt(Location location, int state) {
         String loc = location.toString();
-
         this.state.put(loc, state);
     }
 

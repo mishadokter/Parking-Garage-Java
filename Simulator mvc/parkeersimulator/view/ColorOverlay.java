@@ -12,9 +12,8 @@ import java.beans.PropertyChangeListener;
  * Created by sanderpost on 01-02-17.
  */
 public class ColorOverlay extends LayerUI<JComponent> implements PropertyChangeListener {
-
-    String newColor = "#000000";
     CarParkModel model;
+
 
     /**
      * The constructor of this class.
@@ -40,19 +39,32 @@ public class ColorOverlay extends LayerUI<JComponent> implements PropertyChangeL
     @Override
     public void paint (Graphics g, JComponent c){
         super.paint(g, c);
+        int curHour = model.getHour();
+        Color newColor;
+        Color exitColor = new Color(0,0,0,0);
+        System.out.println(curHour);
 
-        newColor = model.getColor();
+        if(curHour > 6 && curHour < 18) {
+            newColor = new Color(0, 0, 0, 0);
+        }else if(curHour > 17 && curHour < 24){
+            newColor = new Color(0, 0, 0, 1 + (curHour*10));
+        }else if(curHour > 0 && curHour < 7){
+            newColor = new Color(0, 0, 0, 255 - (curHour*10));
+        }else{
+            newColor = new Color(0, 0, 0, 255);
+        }
 
+
+        //System.out.println(newColor);
         Graphics2D g2 = (Graphics2D) g.create();
 
         int w = c.getWidth();
-        int h = c.getHeight()/7;
+        int h = c.getHeight() / 5;
         g2.setComposite(AlphaComposite.getInstance(
                 AlphaComposite.SRC_OVER, .75f));
 
-        Color exitColor = new Color(255,255,255,0);
 
-        g2.setPaint(new GradientPaint(0, 0, Color.decode(newColor), 0, h,exitColor));
+        g2.setPaint(new GradientPaint(0, 0, newColor, 0, h,exitColor));
 
         g2.fillRect(0, 0, w, h);
 
