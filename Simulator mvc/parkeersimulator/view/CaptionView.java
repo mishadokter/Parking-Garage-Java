@@ -34,7 +34,7 @@ public class CaptionView extends AbstractView {
      */
     private void createTable() {
         // Initiating our panel, and set it to visible.
-        captionPanel = new JPanel(new GridLayout(0,1));
+        captionPanel = new JPanel(new GridLayout(0, 1));
         add(captionPanel);
         captionPanel.setVisible(true);
     }
@@ -46,7 +46,7 @@ public class CaptionView extends AbstractView {
      */
     private void attachToPanel() {
         // Create the labels borders.
-        Border paddingBorder = BorderFactory.createEmptyBorder(10,25,10,25);
+        Border paddingBorder = BorderFactory.createEmptyBorder(10, 25, 10, 25);
         Border border = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
         // We want to initiate an entryset & iterator on our hashmap.
         // Because each loop our iterator can pick up the set of that entry.
@@ -55,12 +55,13 @@ public class CaptionView extends AbstractView {
         // Do a while loop until we don't have entries left in our map.
         // Attach the key & value in it's own way to a JLabel.
         while (it.hasNext()) {
-            Map.Entry me = (Map.Entry)it.next();
-            JLabel label = new JLabel(me.getValue().toString(), JLabel.LEFT);
+            Map.Entry me = (Map.Entry) it.next();
+            JLabel label = new JLabel(me.getKey().toString(), JLabel.LEFT);
             label.setPreferredSize(new Dimension(200, 40));
             label.setOpaque(true);
-            label.setBackground(Color.decode(me.getKey().toString()));
+            label.setBackground(Color.WHITE);
             label.setBorder(BorderFactory.createCompoundBorder(border, paddingBorder));
+            label.setIcon(new ImageIcon(getClass().getResource("resources/" + me.getValue())));
             captionPanel.add(label);
         }
     }
@@ -72,10 +73,11 @@ public class CaptionView extends AbstractView {
      * Both of them are strings.
      */
     private void fillHashMap() {
-        colors.put("#a9a9a9", "Dark Gray");
-        colors.put("#ffffff", "White");
-        colors.put("#ff00000", "Red");
-        colors.put("#0000ff", "Blue");
-        colors.put("#008000", "Green");
+        colors.put("Normal car", "AdHocCar.png");
+        colors.put("Pass car", "PassCar.png");
+        colors.put("Bad parked car", "BadParker.png");
+        colors.put("Empty car spot", "Empty.png");
+        colors.put("Pass car spot", "PassPlace.png");
+        colors.put("Reserved car spot", "ResCar.png");
     }
 }

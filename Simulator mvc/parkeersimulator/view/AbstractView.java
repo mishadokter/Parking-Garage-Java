@@ -16,10 +16,17 @@ public class AbstractView extends JPanel {
         model.addView(this);
     }
 
+    /**
+     * Gets the main model.
+     * @return Gets the main model.
+     */
     public AbstractModel getModel() {
         return model;
     }
 
+    /**
+     * Updates the view.
+     */
     public void updateView() {
         repaint();
     }

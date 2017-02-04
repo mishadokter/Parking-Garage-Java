@@ -1,11 +1,10 @@
 package parkeersimulator.logic;
 
-import java.beans.PropertyChangeEvent;
+import parkeersimulator.objects.*;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.*;
-
-import parkeersimulator.objects.*;
 
 /**
  * The main model initializing.
@@ -95,6 +94,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         modelSettings.put("tickPause", tickPause);
         setReferences();
     }
+
     /*
     Deze functie set de referenties naar die van de hashmap.
      */
@@ -113,7 +113,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         paymentSpeed = modelSettings.get("paymentSpeed");
         exitSpeed = modelSettings.get("exitSpeed");
         tickPause = modelSettings.get("tickPause");
-  }
+    }
 
     public Map<String, Integer> getOptions() {
         return modelSettings;
@@ -269,7 +269,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         carsLeaving();
     }
 
-    private void updateStats(){
+    private void updateStats() {
         modelStats.put("Time", String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":00");
         modelStats.put("Day", getDay());
         modelStats.put("Entrance Queue", String.valueOf(entranceCarQueue.carsInQueue()));
@@ -282,7 +282,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     /**
      * Update all views.
      */
-    private void updateViews(){
+    private void updateViews() {
         updateStats();
         carTick();
         notifyViews();
@@ -316,7 +316,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 i < enterSpeed) {
             Car car = queue.removeCar();
             Location freeLocation = getFirstFreeLocation(car);
-            setCarAt(freeLocation, car);
+            setStateAt(freeLocation, car);
             i++;
         }
     }
@@ -461,7 +461,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
             case RES:
                 for (int i = 0; i < numberOfCars; i++) {
                     Car car = new ResCar();
-                    setCarAt(getFirstFreeLocation(car), car);
+                    setStateAt(getFirstFreeLocation(car), car);
                 }
                 break;
         }
@@ -475,7 +475,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private void carLeavesSpot(Car car) {
         if (car instanceof ResCar) {
             removeCarAt(car.getLocation());
-            setCarAt(car.getLocation(), new AdHocCar());
+            setStateAt(car.getLocation(), new AdHocCar());
             return;
         }
         removeCarAt(car.getLocation());
@@ -548,7 +548,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     2 - place taken by pass holder
     5 - empty place for pass holders
     6 - taken by a bad parker*/
-    public boolean setCarAt(Location location, Car car) {
+    public boolean setStateAt(Location location, Car car) {
         if (!locationIsValid(location)) {
             return false;
         }
