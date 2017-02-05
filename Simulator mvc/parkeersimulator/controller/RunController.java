@@ -1,6 +1,7 @@
 package parkeersimulator.controller;
 
 import parkeersimulator.logic.CarParkModel;
+import parkeersimulator.main.CarParkSim;
 import parkeersimulator.view.ManagementView;
 
 import javax.swing.*;
@@ -14,57 +15,38 @@ import java.util.Arrays;
 public class RunController extends AbstractController implements ActionListener {
 
     private JButton stepDay, stepWeek, startSteps, stopSteps, settings, guiButton, resetButton;
+    private JFrame simFrame;
+    private CarParkGui gui;
     private ArrayList<JButton> buttons;
 
-    public RunController(CarParkModel model) {
+    public RunController(CarParkModel model, JFrame simFrame) {
         super(model);
-        //setSize(400, 500);
+        this.simFrame = simFrame;
+        gui = new CarParkGui(model, true);
         stepDay = new JButton("Day");
-        stepDay.addActionListener(this);
         stepWeek = new JButton("Week");
-        stepWeek.addActionListener(this);
         startSteps = new JButton("Start");
-        startSteps.addActionListener(this);
         stopSteps = new JButton("Stop");
-        stopSteps.addActionListener(this);
         settings = new JButton("Management");
-        settings.addActionListener(this);
         guiButton = new JButton("Settings");
-        guiButton.addActionListener(this);
         resetButton = new JButton("Reset");
-        resetButton.addActionListener(this);
 
         buttons = new ArrayList<>();
         buttons.add(stepDay);
         buttons.add(stepWeek);
         buttons.add(startSteps);
 
-        this.setLayout(null);
-        add(stepDay);
-        add(stepWeek);
-        add(startSteps);
-        add(stopSteps);
-        add(settings);
-        add(guiButton);
-        add(resetButton);
-        stepDay.setBounds(50, 10, 70, 30);
-        stepWeek.setBounds(140, 10, 70, 30);
-        startSteps.setBounds(230, 10, 70, 30);
-        stopSteps.setBounds(320, 10, 70, 30);
-        settings.setBounds(410, 10, 130, 30);
-        guiButton.setBounds(560, 10, 100, 30);
-        resetButton.setBounds(680, 10, 100, 30);
-
         // Loop om dezelfde style mee te geven aan alle buttons.
+        int spacing = 1;
         for (JButton b : Arrays.asList(stepDay, stepWeek, startSteps, stopSteps, settings, guiButton, resetButton)) {
             b.setBackground(new Color(59, 89, 182));
             b.setForeground(Color.WHITE);
             b.setFocusPainted(false);
-            b.setFont(new Font("Tahoma", Font.BOLD, 12));
+            b.setFont(new Font("Tahoma", Font.BOLD, 10));
+            b.addActionListener(this);
+            add(b);
         }
-
         setVisible(true);
-
     }
 
     private void disableButtons() {
@@ -112,6 +94,16 @@ public class RunController extends AbstractController implements ActionListener 
             return;
         }
 
+        if (e.getSource() == resetButton) {
+            model.stopSteps();
+            simFrame.dispose();
+            new CarParkSim();
+        }
+
+        if (e.getSource() == guiButton) {
+            gui.openGui();
+        }
+
         if (e.getSource() == settings) {
             try {
 
@@ -135,3 +127,4 @@ public class RunController extends AbstractController implements ActionListener 
 
     }
 }
+

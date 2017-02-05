@@ -1,6 +1,7 @@
 package parkeersimulator.controller;
 
 import parkeersimulator.logic.*;
+import parkeersimulator.main.CarParkSim;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -15,24 +16,21 @@ import java.util.*;
 
 public class CarParkGui extends AbstractController {
     private TreeMap<String, JTextField> optionFields;
-    private Map<String, Integer> defaultValues;
     private JPanel tabArrivals,tabOptions,tabCount;
     private JFrame guiFrame;
 
-    public CarParkGui(CarParkModel model) {
+    public CarParkGui(CarParkModel model, boolean running) {
         super(model);
-        //  defaultValues = model.getOptions();
         optionFields = new TreeMap<>();
         guiFrame = new JFrame();
         //Panelen aanmaken voor tab content//
         tabOptions = new JPanel(new GridLayout(0,3));
         tabArrivals = new JPanel(new GridLayout(0,3));
         tabCount = new JPanel(new GridLayout(0,3));
-
         //Tabjes paneel aanmaken//
         JTabbedPane jtp = new JTabbedPane();
-
         //JFrame settings//
+        guiFrame.setResizable(false);
         guiFrame.getContentPane().add(jtp);
         guiFrame.setTitle("Parking garage GUI");
         guiFrame.setSize(550, 300); //set size so the user can "see" it
@@ -42,20 +40,22 @@ public class CarParkGui extends AbstractController {
         startSim.setLocation(0,0);
         startSim.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                submitOptions();
+                guiFrame.dispose();
+                new CarParkSim(genInt("numberOfFloors"), genInt("numberOfRows"), genInt("numberOfPlaces"), genInt("numberOfPasses"));
             }
         } );
-        //guiFrame.getContentPane().add(startSim, BorderLayout.SOUTH);
-
         setDefaults();
-
         //JPanel tabs toevoegen aan tab panel//
-        jtp.addTab("Model", tabCount);
-        jtp.addTab("Options", tabOptions);
-        jtp.addTab("Arrivals", tabArrivals);
-        guiFrame.setAlwaysOnTop(true);
-        guiFrame.setVisible(true); //otherwise you won't "see" it
+        if(running == false){
+            jtp.addTab("Model", tabCount);
+            guiFrame.getContentPane().add(startSim, BorderLayout.SOUTH);
+            guiFrame.setVisible(true);
+        }else{
+            jtp.addTab("Options", tabOptions);
+            jtp.addTab("Arrivals", tabArrivals);
+        }
     }
+
     public void setDefaults(){
         Set set = model.getOptions().entrySet();
         Iterator i = set.iterator();
@@ -92,6 +92,8 @@ public class CarParkGui extends AbstractController {
             selected.add(slider);
         }
     }
+
+
     public void submitOptions(){
         Set set = optionFields.entrySet();
         Iterator i = set.iterator();
@@ -103,11 +105,13 @@ public class CarParkGui extends AbstractController {
         }
         model.setReferences();
     }
+
     public void openGui(){
-        if(guiFrame.isVisible()){
-            guiFrame.setVisible(false);
-        }else{
-            guiFrame.setVisible(true);
-        }
+        guiFrame.setVisible(true);
+    }
+
+    public int genInt(String val){
+        JTextField temp = optionFields.get(val);
+        return Integer.parseInt(temp.getText());
     }
 }

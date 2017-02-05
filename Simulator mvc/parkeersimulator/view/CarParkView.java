@@ -129,7 +129,11 @@ public class CarParkView extends AbstractView {
             AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
             image = op.filter(image, null);
         }
-        g.drawImage(image, location.getFloor() * 260 + (1 + (int) Math.floor(location.getRow() * 0.5)) * 75 + (location.getRow() % 2) * 26, 60 + location.getPlace() * 13, 26, 13, Color.decode("#5c5c5c"), null);
+        g.drawImage(image, location.getFloor()
+                        * 260 + (1 + (int) Math.floor(location.getRow() * 0.5))
+                        * 75 + (location.getRow() % 2)
+                        * 26, 60 + location.getPlace()
+                        * 13, 26, 13, Color.decode("#5c5c5c"), null);
     }
 
     /**

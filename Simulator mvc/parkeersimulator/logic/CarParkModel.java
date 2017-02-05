@@ -23,7 +23,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private int weekendBadArrivals = 10;
     private int weekDayPassArrivals = 50; // average number of arriving cars per hour
     private int weekendPassArrivals = 5; // average number of arriving cars per hour
-    private int numberOfPasses = 15;
     private int enterSpeed = 3; // number of cars that can enter per minute
     private int paymentSpeed = 7; // number of cars that can pay per minute
     private int exitSpeed = 5; // number of cars that can leave per minute
@@ -32,7 +31,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private Garage garage;
     private TicketMachine ticketMachine;
     private PropertyChangeSupport changes = new PropertyChangeSupport(this);
-    private String[] colors;
     private int day = 0;
     private int hour = 0;
     private int minute = 0;
@@ -42,9 +40,10 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private Map<String, Integer> modelSettings;
     private int minutesToRun;
     private TreeMap<String, String> modelStats;
-    private boolean run;
+    private boolean run = false;
 
     // Fields from SimulatorView
+    private int numberOfPasses = 15;
     private int numberOfFloors = 3;
     private int numberOfRows = 6;
     private int numberOfPlaces = 30;
@@ -55,6 +54,18 @@ public class CarParkModel extends AbstractModel implements Runnable {
      * Creates the car park.
      */
     public CarParkModel() {
+        modelConfig();
+    }
+
+    public CarParkModel(int numberOfFloors, int numberOfRows, int numberOfPlaces, int numberOfPasses) {
+        this.numberOfFloors = numberOfFloors;
+        this.numberOfRows = numberOfRows;
+        this.numberOfPlaces = numberOfPlaces;
+        this.numberOfPasses = numberOfPasses;
+        modelConfig();
+    }
+
+    public void modelConfig(){
         modelSettings = new HashMap<>();
         modelStats = new TreeMap<>();
         entranceCarQueue = new CarQueue();
@@ -62,14 +73,12 @@ public class CarParkModel extends AbstractModel implements Runnable {
         paymentCarQueue = new CarQueue();
         exitCarQueue = new CarQueue();
         ticketMachine = new TicketMachine(this);
-        setNumberOfOpenSpots();
-        run = false;
         numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
         cars = new Car[numberOfFloors][numberOfRows][numberOfPlaces];
         spots = new ArrayList<>();
         passHolders = new ArrayList<>();
-        getAllSpots();
         garage = new Garage(this);
+        getAllSpots();
         setPassSpot();
         setDefaults();
     }
@@ -331,7 +340,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
             if (car.getHasToPay()) {
                 car.setIsPaying(true);
                 paymentCarQueue.addCar(car);
-                System.out.println("## Time left: " + car.getTotalMinutes() + " ## ");
+                //System.out.println("## Time left: " + car.getTotalMinutes() + " ## ");
 
             } else {
                 carLeavesSpot(car);
@@ -349,7 +358,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         while (paymentCarQueue.carsInQueue() > 0 && i < paymentSpeed) {
             Car car = paymentCarQueue.removeCar();
             int ml = car.getMinutesLeft();
-            System.out.print("A Car has paid");
+            //System.out.print("A Car has paid");
             ticketMachine.normalPay();
 
             carLeavesSpot(car);
@@ -482,13 +491,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         exitCarQueue.addCar(car);
     }
 
-    /**
-     * Sets the total number of open spots in the car park.
-     * @return The total number of open spots in the car park.
-     */
-    private int setNumberOfOpenSpots() {
-        return numberOfOpenSpots = numberOfFloors * numberOfRows * numberOfPlaces;
-    }
+
 
     /**
      * Gets the number of floors in the car park.

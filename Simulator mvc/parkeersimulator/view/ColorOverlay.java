@@ -42,8 +42,6 @@ public class ColorOverlay extends LayerUI<JComponent> implements PropertyChangeL
         int curHour = model.getHour();
         Color newColor;
         Color exitColor = new Color(0,0,0,0);
-        System.out.println(curHour);
-
         if(curHour > 6 && curHour < 18) {
             newColor = new Color(0, 0, 0, 0);
         }else if(curHour > 17 && curHour < 24){
@@ -53,21 +51,12 @@ public class ColorOverlay extends LayerUI<JComponent> implements PropertyChangeL
         }else{
             newColor = new Color(0, 0, 0, 255);
         }
-
-
-        //System.out.println(newColor);
         Graphics2D g2 = (Graphics2D) g.create();
-
         int w = c.getWidth();
         int h = c.getHeight() / 5;
-        g2.setComposite(AlphaComposite.getInstance(
-                AlphaComposite.SRC_OVER, .75f));
-
-
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .75f));
         g2.setPaint(new GradientPaint(0, 0, newColor, 0, h,exitColor));
-
         g2.fillRect(0, 0, w, h);
-
         g2.dispose();
     }
 }

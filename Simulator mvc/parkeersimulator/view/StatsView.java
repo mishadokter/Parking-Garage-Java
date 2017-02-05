@@ -20,7 +20,7 @@ public class StatsView extends AbstractView {
     private Thread thread;
     private Map<String, JLabel> statDisplay;
     private boolean runView = true;
-
+    private int refreshRate = 100; //ms
     public StatsView(CarParkModel model) {
         super(model);
         statDisplay = new HashMap<>();
@@ -53,7 +53,7 @@ public class StatsView extends AbstractView {
                                 statDisplay.get(keyName).setText(keyName + ": " + val);
                             }
                         }
-                        Thread.sleep(100);
+                        Thread.sleep(refreshRate);
                     }
                 } catch (InterruptedException ex) {
                     //SomeFishCatching
