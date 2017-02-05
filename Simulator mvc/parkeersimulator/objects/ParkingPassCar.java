@@ -13,5 +13,6 @@ public class ParkingPassCar extends Car {
         this.setMinutesLeft(stayMinutes);
         this.setHasToPay(false);
         this.setState(2);
+        this.setTotalMinutes(stayMinutes);
     }
 }

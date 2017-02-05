@@ -141,29 +141,29 @@ public class CarParkModel extends AbstractModel implements Runnable {
      *
      * @return The day of the week
      */
-    public String getDay() {
+    private String getDay() {
         String dayName = null;
         switch (day) {
             case 0:
-                dayName = "maandag";
+                dayName = "Monday";
                 break;
             case 1:
-                dayName = "dinsdag";
+                dayName = "Tuesday";
                 break;
             case 2:
-                dayName = "woensdag";
+                dayName = "Woensdag";
                 break;
             case 3:
-                dayName = "donderdag";
+                dayName = "Thursday";
                 break;
             case 4:
-                dayName = "vrijdag";
+                dayName = "Friday";
                 break;
             case 5:
-                dayName = "zaterdag";
+                dayName = "Saturday";
                 break;
             case 6:
-                dayName = "zondag";
+                dayName = "Sunday";
                 break;
         }
         return dayName;
@@ -181,7 +181,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     /**
      * Gets all available spots and put them into a list.
      */
-    public void getAllSpots() {
+    private void getAllSpots() {
         for (int i = 0; i < numberOfFloors; i++) {
             for (int j = 0; j < numberOfRows; j++) {
                 for (int k = 0; k < numberOfPlaces; k++) {
@@ -325,7 +325,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
                 i < enterSpeed) {
             Car car = queue.removeCar();
             Location freeLocation = getFirstFreeLocation(car);
-            setStateAt(freeLocation, car);
+            setCarAt(freeLocation, car);
             i++;
         }
     }
@@ -340,7 +340,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
             if (car.getHasToPay()) {
                 car.setIsPaying(true);
                 paymentCarQueue.addCar(car);
-                //System.out.println("## Time left: " + car.getTotalMinutes() + " ## ");
+                System.out.println("## Time left: " + car.getTotalMinutes() + " ## ");
 
             } else {
                 carLeavesSpot(car);
@@ -357,10 +357,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         int i = 0;
         while (paymentCarQueue.carsInQueue() > 0 && i < paymentSpeed) {
             Car car = paymentCarQueue.removeCar();
-            int ml = car.getMinutesLeft();
-            //System.out.print("A Car has paid");
-            ticketMachine.normalPay();
-
+            ticketMachine.normalPay(car.getTotalMinutes());
             carLeavesSpot(car);
             i++;
         }
@@ -379,23 +376,16 @@ public class CarParkModel extends AbstractModel implements Runnable {
     }
 
     private boolean isTheather() {
-        String friday = "vrijdag";
-        String saturday = "zaterdag";
-        String sunday = "zondag";
-        if (getDay().equals(friday) || getDay().equals(saturday)) {
-            if (hour >= 18 && hour <= 20) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if (getDay().equals(sunday)) {
+        if (getDay().toLowerCase().equals("friday") || getDay().toLowerCase().equals("saturday")) {
+            return hour >= 18 && hour <= 20;
+        } else if (getDay().toLowerCase().equals("sunday")) {
             return hour >= 14 && hour <= 18;
         }
         return false;
     }
 
     private boolean isShopNight() {
-        if (getDay().equals("donderdag")) {
+        if (getDay().toLowerCase().equals("thursday")) {
             if (hour >= 17 && hour <= 22) {
                 return true;
             }
@@ -470,7 +460,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
             case RES:
                 for (int i = 0; i < numberOfCars; i++) {
                     Car car = new ResCar();
-                    setStateAt(getFirstFreeLocation(car), car);
+                    setCarAt(getFirstFreeLocation(car), car);
                 }
                 break;
         }
@@ -484,7 +474,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private void carLeavesSpot(Car car) {
         if (car instanceof ResCar) {
             removeCarAt(car.getLocation());
-            setStateAt(car.getLocation(), new AdHocCar());
+            setCarAt(car.getLocation(), new AdHocCar());
             return;
         }
         removeCarAt(car.getLocation());
@@ -512,7 +502,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     /**
      * Gets the number of places in the car park on each row.
      * @return The number of places in the car park on each row.
-     * */
+     */
     public int getNumberOfPlaces() {
         return numberOfPlaces;
     }
@@ -521,7 +511,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
      * Gets the number of open spots in the car park.
      * @return The number of open spots in the car park.
      */
-    public int getNumberOfOpenSpots() {
+    private int getNumberOfOpenSpots() {
         return numberOfOpenSpots;
     }
 
@@ -531,7 +521,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
      * @param location The location of the car.
      * @return The car on the specific location.
      */
-    public Car getCarAt(Location location) {
+    private Car getCarAt(Location location) {
         if (!locationIsValid(location)) {
             return null;
         }
@@ -551,7 +541,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     2 - place taken by pass holder
     5 - empty place for pass holders
     6 - taken by a bad parker*/
-    public boolean setStateAt(Location location, Car car) {
+    private boolean setCarAt(Location location, Car car) {
         if (!locationIsValid(location)) {
             return false;
         }
@@ -603,7 +593,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
      * @param location The location the car has to be removed.
      * @return The car that has been removed.
      */
-    public Car removeCarAt(Location location) {
+    private Car removeCarAt(Location location) {
         if (!locationIsValid(location)) {
             return null;
         }
@@ -648,7 +638,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
      * @param car The car that wants to park.
      * @return The location the car can park.
      */
-    public Location getFirstFreeLocation(Car car) {
+    private Location getFirstFreeLocation(Car car) {
         for (int floor = 0; floor < getNumberOfFloors(); floor++) {
             for (int row = 0; row < getNumberOfRows(); row++) {
                 for (int place = 0; place < getNumberOfPlaces(); place++) {
@@ -692,7 +682,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
      *
      * @return The car that has to leave.
      */
-    public Car getFirstLeavingCar() {
+    private Car getFirstLeavingCar() {
         for (int floor = 0; floor < getNumberOfFloors(); floor++) {
             for (int row = 0; row < getNumberOfRows(); row++) {
                 for (int place = 0; place < getNumberOfPlaces(); place++) {
@@ -710,7 +700,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
     /**
      * Removes a minute from time the cars wants to park.
      */
-    public void carTick() {
+    private void carTick() {
         for (int floor = 0; floor < getNumberOfFloors(); floor++) {
             for (int row = 0; row < getNumberOfRows(); row++) {
                 for (int place = 0; place < getNumberOfPlaces(); place++) {
@@ -736,16 +726,10 @@ public class CarParkModel extends AbstractModel implements Runnable {
         int floor = location.getFloor();
         int row = location.getRow();
         int place = location.getPlace();
-        if (floor < 0 || floor >= numberOfFloors || row < 0 || row > numberOfRows || place < 0 || place > numberOfPlaces) {
-            return false;
-        }
-        return true;
+        return !(floor < 0 || floor >= numberOfFloors || row < 0 || row > numberOfRows || place < 0 || place > numberOfPlaces);
     }
 
     @Override
-    /**
-     * Starts the simulation.
-     */
     public void run() {
         for (int i = 0; i < minutesToRun && run; i++) {
             tick();

@@ -28,6 +28,7 @@ public class CarParkSim implements PropertyChangeListener {
     private LayerUI<JComponent> layerUI;
     private JLayer jLayer;
     private CarParkGui startGui;
+
     /**
      * The constructor
      */
@@ -48,8 +49,7 @@ public class CarParkSim implements PropertyChangeListener {
     }
 
 
-
-    public void configSim(){
+    public void configSim() {
         screen = new JFrame("CityPark Groningen parking simulator");
         carParkModel.addPropertyListener(this);
         colorOverlay = new ColorOverlay(carParkModel);
@@ -63,7 +63,6 @@ public class CarParkSim implements PropertyChangeListener {
     }
 
 
-
     /**
      * Creating the User Interface.
      * Besides the constructor, we got this method to seperate the creating of frame & the models.
@@ -75,9 +74,9 @@ public class CarParkSim implements PropertyChangeListener {
         JPanel jPanel = new JPanel(null);
         // Adding our loose panels on our panel above.
         jPanel.add(captionView);
-        captionView.setBounds(850, 342, 200, 200);
+        captionView.setBounds(850, 342, 200, 500);
         jPanel.add(runController);
-        runController.setBounds(0, 550, 800, 500);
+        runController.setBounds(30, 550, 800, 50);
         jPanel.add(carParkView);
         carParkView.setBounds(0, 0, 800, 500);
         jPanel.add(statView);
@@ -87,12 +86,12 @@ public class CarParkSim implements PropertyChangeListener {
         jLayer = new JLayer<>(jPanel, layerUI);
         // Adding the new layer to our frame.
         screen.add(jLayer);
-        screen.setSize(1100, 650);
+        screen.setSize(1100, 700);
         screen.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         screen.setVisible(true);
     }
 
-    public void resetSim(){
+    public void resetSim() {
         screen.dispose();
     }
 

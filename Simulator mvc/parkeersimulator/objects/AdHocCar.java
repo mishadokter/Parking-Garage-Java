@@ -13,5 +13,6 @@ public class AdHocCar extends Car {
         this.setMinutesLeft(stayMinutes);
         this.setHasToPay(true);
         this.setState(1);
+        this.setTotalMinutes(stayMinutes);
     }
 }

@@ -8,12 +8,9 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-/**
- * Created by sanderpost on 01-02-17.
- */
 public class ColorOverlay extends LayerUI<JComponent> implements PropertyChangeListener {
-    CarParkModel model;
 
+    private CarParkModel model;
 
     /**
      * The constructor of this class.

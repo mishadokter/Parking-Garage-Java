@@ -8,19 +8,16 @@ import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.util.*;
 
-/**
- * Created by sanderpost on 31-01-17.
- * This class makes our, in Dutch; "Legenda".
- */
+
 public class CaptionView extends AbstractView {
 
     private JPanel captionPanel;
-    private HashMap<String, String> colors;
+    private LinkedHashMap<String, String> legend;
 
     public CaptionView(CarParkModel model) {
         super(model);
         // Create a new HashMap.
-        colors = new HashMap<String, String>();
+        legend = new LinkedHashMap<>();
         // Initialize the values of the array.
         fillHashMap();
         // Create the panel.
@@ -50,7 +47,7 @@ public class CaptionView extends AbstractView {
         Border border = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
         // We want to initiate an entryset & iterator on our hashmap.
         // Because each loop our iterator can pick up the set of that entry.
-        Set entrySet = colors.entrySet();
+        Set entrySet = legend.entrySet();
         Iterator it = entrySet.iterator();
         // Do a while loop until we don't have entries left in our map.
         // Attach the key & value in it's own way to a JLabel.
@@ -61,7 +58,7 @@ public class CaptionView extends AbstractView {
             label.setOpaque(true);
             label.setBackground(Color.WHITE);
             label.setBorder(BorderFactory.createCompoundBorder(border, paddingBorder));
-            label.setIcon(new ImageIcon(getClass().getResource("resources/" + me.getValue())));
+            label.setIcon(new ImageIcon(getClass().getResource("resources/cars/" + me.getValue())));
             captionPanel.add(label);
         }
     }
@@ -73,11 +70,11 @@ public class CaptionView extends AbstractView {
      * Both of them are strings.
      */
     private void fillHashMap() {
-        colors.put("Normal car", "AdHocCar.png");
-        colors.put("Pass car", "PassCar.png");
-        colors.put("Bad parked car", "BadParker.png");
-        colors.put("Empty car spot", "Empty.png");
-        colors.put("Pass car spot", "PassPlace.png");
-        colors.put("Reserved car spot", "ResCar.png");
+        legend.put("Normal car", "adhoccar.png");
+        legend.put("Pass car", "passcar.png");
+        legend.put("Bad parked car", "badparkercar.png");
+        legend.put("Empty car spot", "empty.png");
+        legend.put("Pass car spot", "passplace.png");
+        legend.put("Reserved car spot", "rescar.png");
     }
 }

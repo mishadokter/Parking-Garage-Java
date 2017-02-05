@@ -10,9 +10,6 @@ import javafx.stage.Stage;
 import javax.swing.*;
 import java.io.IOException;
 
-/**
- * Created by Misha on 26-1-2017.
- */
 public abstract class DefaultView {
 
     protected Stage defaultStage;

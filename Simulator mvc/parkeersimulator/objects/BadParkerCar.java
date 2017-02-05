@@ -15,6 +15,7 @@ public class BadParkerCar extends Car {
         this.setMinutesLeft(stayMinutes);
         this.setHasToPay(true);
         this.setState(6);
+        this.setTotalMinutes(stayMinutes);
         state2 = 7;
     }
 
