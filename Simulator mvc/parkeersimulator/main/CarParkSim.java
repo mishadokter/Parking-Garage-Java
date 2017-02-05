@@ -31,7 +31,13 @@ public class CarParkSim implements PropertyChangeListener {
     /**
      * The constructor
      */
+
     public CarParkSim() {
+        carParkModel = new CarParkModel();
+        configSim();
+    }
+
+    public CarParkSim(boolean gui) {
         carParkModel = new CarParkModel();
         startGui = new CarParkGui(carParkModel, false);
     }
@@ -40,6 +46,8 @@ public class CarParkSim implements PropertyChangeListener {
         carParkModel = new CarParkModel(numberOfFloors, numberOfRows, numberOfPlaces, numberOfPasses);
         configSim();
     }
+
+
 
     public void configSim(){
         screen = new JFrame("CityPark Groningen parking simulator");

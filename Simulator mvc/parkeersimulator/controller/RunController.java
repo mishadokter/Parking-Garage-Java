@@ -97,7 +97,7 @@ public class RunController extends AbstractController implements ActionListener 
         if (e.getSource() == resetButton) {
             model.stopSteps();
             simFrame.dispose();
-            new CarParkSim();
+            new CarParkSim(true);
         }
 
         if (e.getSource() == guiButton) {
