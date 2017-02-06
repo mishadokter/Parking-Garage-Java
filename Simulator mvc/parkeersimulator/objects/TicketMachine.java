@@ -77,8 +77,9 @@ public class TicketMachine {
      * Everytime a payment is made, the total is adjusted.
      * @return  The total money collected.
      */
-    public int getTotalMoney() {
-        return total / 100;
+    public String getTotalMoney() {
+        double t = total / 100f;
+        return "€"+String.format("%.2f", t);
     }
 
     /**

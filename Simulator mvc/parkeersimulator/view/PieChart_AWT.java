@@ -32,6 +32,8 @@ public class PieChart_AWT extends ApplicationFrame {
         return chart;
     }
 
+
+
     public JPanel createDemoPanel() {
         JFreeChart chart = createChart(createDataset());
         return new ChartPanel(chart);
@@ -39,7 +41,7 @@ public class PieChart_AWT extends ApplicationFrame {
 
     private PieDataset createDataset() {
         DefaultPieDataset dataset = new DefaultPieDataset();
-        dataset.setValue("AdHoc", new Double(model.getTotal()));
+        dataset.setValue("AdHoc ("+model.getTotal()+")", new Double(model.getTotal()));
         dataset.setValue("Pass", new Double(model.getOpenSpots()));
         return dataset;
     }

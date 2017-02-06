@@ -77,13 +77,13 @@ public class CarParkSim implements PropertyChangeListener {
         JPanel jPanel = new JPanel(null);
         // Adding our loose panels on our panel above.
         jPanel.add(captionView);
-        captionView.setBounds(850, 342, 200, 500);
+        captionView.setBounds(850, 392, 200, 500);
         jPanel.add(runController);
         runController.setBounds(30, 550, 800, 50);
         jPanel.add(carParkView);
         carParkView.setBounds(0, 0, 800, 500);
         jPanel.add(statView);
-        statView.setBounds(850, 52, 200, 500);
+        statView.setBounds(850, 52, 200, 550);
         // Creating a new layer and layer UI.
         layerUI = colorOverlay;
         jLayer = new JLayer<>(jPanel, layerUI);
