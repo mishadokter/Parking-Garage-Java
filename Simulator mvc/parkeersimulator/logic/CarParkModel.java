@@ -26,7 +26,8 @@ public class CarParkModel extends AbstractModel implements Runnable {
     private int enterSpeed = 3; // number of cars that can enter per minute
     private int paymentSpeed = 7; // number of cars that can pay per minute
     private int exitSpeed = 5; // number of cars that can leave per minute
-
+    private int ticketPrice = 5;
+    private int totalCars = 0;
     private CarQueue entranceCarQueue, entrancePassQueue, paymentCarQueue, exitCarQueue;
     private Garage garage;
     private TicketMachine ticketMachine;
@@ -141,8 +142,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
      *
      * @return The day of the week
      */
-    private String getDay() {
-        String dayName = null;
+    public String getDay() {
         switch (day) {
             case 0:
                 return "Monday";
@@ -279,6 +279,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         modelStats.put("Payment Queue", String.valueOf(paymentCarQueue.carsInQueue()));
         modelStats.put("Exit Queue", String.valueOf(exitCarQueue.carsInQueue()));
         modelStats.put("Open Spots", String.valueOf(getNumberOfOpenSpots()));
+        modelStats.put("Total paid", ticketMachine.getTotalMoney());
     }
 
     /**
@@ -351,6 +352,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         while (paymentCarQueue.carsInQueue() > 0 && i < paymentSpeed) {
             Car car = paymentCarQueue.removeCar();
             ticketMachine.normalPay(car.getTotalMinutes());
+
             carLeavesSpot(car);
             i++;
         }
