@@ -105,18 +105,9 @@ public class RunController extends AbstractController implements ActionListener 
         }
 
         if (e.getSource() == settings) {
-            try {
-
-                ManagementView mv = new ManagementView();
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        mv.run();
-                    }
-                });
-            } catch (Exception ex) {
-                System.out.println("Settings file not found");
-            }
+            ManagementView mv = null;
+            mv = new ManagementView();
+            mv.run();
             return;
         }
 

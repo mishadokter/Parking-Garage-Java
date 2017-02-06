@@ -5,8 +5,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
-
-import java.io.IOException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import parkeersimulator.logic.CarParkModel;
 
 /**
  * Created by Misha on 26-1-2017.
@@ -14,12 +17,13 @@ import java.io.IOException;
 
 public class ManagementView extends DefaultView {
 
+    private CarParkModel model;
     @FXML
     private PieChart piechart;
     @FXML
     private BarChart barChart;
 
-    public ManagementView() throws IOException {
+    public ManagementView(){
         super();
     }
 
@@ -86,24 +90,37 @@ public class ManagementView extends DefaultView {
                 "    -fx-padding: 5 5 5 5;\n" +
                 "    -fx-background-insets: 0, 1, 2;");
 
-        piechart.setVisible(true);
-        barChart.setVisible(false); // Maak de barchart invisible
 
-        /*final PieChart chart = new PieChart(pieChartData);
+
         final Label caption = new Label("");
-        caption.setTextFill(Color.BLACK);
+        caption.setTextFill(Color.DARKORANGE);
+        caption.setStyle("-fx-font: 24 arial;");
 
         for (final PieChart.Data data : piechart.getData()) {
             data.getNode().addEventHandler(MouseEvent.MOUSE_PRESSED,
-                    new EventHandler<MouseEvent>() {
-                        @Override public void handle(MouseEvent e) {
-                            caption.setTranslateX(e.getSceneX());
-                            caption.setTranslateY(e.getSceneY());
-                            caption.setText(String.valueOf(data.getPieValue())
-                                    + "auto's");
+                    e -> {
+                        double total = 0;
+                        for (PieChart.Data d : piechart.getData()) {
+                            total += d.getPieValue();
                         }
-                    });
-        }*/
+                        caption.setTranslateX(e.getSceneX());
+                        caption.setTranslateY(e.getSceneY());
+                        String text = String.format("%.1f%%", 100*data.getPieValue()/total);
+                        String textAmount = (String.valueOf(data.getPieValue()) + "");
+                        caption.setText(text);
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Information Dialog");
+                        alert.setHeaderText(null);
+                        alert.setContentText(" Total number of cars of this day: " + textAmount + "\n This is " + text + " of 100% from this week" );
+
+                        alert.showAndWait();
+                    }
+            );
+        }
+
+        piechart.setVisible(true);
+        barChart.setVisible(false); // Maak de barchart invisible
+
 
     }
 }

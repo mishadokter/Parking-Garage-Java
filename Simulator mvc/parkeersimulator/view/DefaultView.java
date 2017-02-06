@@ -14,7 +14,9 @@ public abstract class DefaultView {
 
     protected Stage defaultStage;
     private static Scene defaultScene;
-        private void initAndShowGUI() throws IOException {
+
+
+    private void initAndShowGUI() throws IOException {
             // This method is invoked on the EDT thread
             JFrame frame = new JFrame("Managemant Panel");
             final JFXPanel fxPanel = new JFXPanel();
