@@ -94,4 +94,28 @@ public class Garage {
         }
         return empty;
     }
+
+    public int getPassPlace() {
+        int passPlace = 0;
+        Iterator it = state.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            if ((int) pair.getValue() == 5) {
+                passPlace++;
+            }
+        }
+        return passPlace;
+    }
+
+    public int getBadParker() {
+        int badParker = 0;
+        Iterator it = state.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            if ((int) pair.getValue() == 6) {
+                badParker++;
+            }
+        }
+        return badParker;
+    }
 }

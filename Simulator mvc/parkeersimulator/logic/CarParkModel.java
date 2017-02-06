@@ -595,6 +595,14 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return garage.getPass();
     }
 
+    public int getBad() {
+        return garage.getBadParker();
+    }
+
+    public int getPassPlace() {
+        return garage.getPassPlace();
+    }
+
     /**
      * Removes a car from the specific location.
      *
