@@ -138,35 +138,27 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     /**
      * Gets the day of the week
-     *
-     * @return The day of the week
+     * @return current day of simulator
      */
     public String getDay() {
-        String dayName = null;
         switch (day) {
             case 0:
-                dayName = "maandag";
-                break;
+                return "maandag";
             case 1:
-                dayName = "dinsdag";
-                break;
+                return "dinsdag";
             case 2:
-                dayName = "woensdag";
-                break;
+                return "woensdag";
             case 3:
-                dayName = "donderdag";
-                break;
+                return "donderdag";
             case 4:
-                dayName = "vrijdag";
-                break;
+                return "vrijdag";
             case 5:
-                dayName = "zaterdag";
-                break;
+                return "zaterdag";
             case 6:
-                dayName = "zondag";
-                break;
+                return "zondag";
+            default:
+                return "";
         }
-        return dayName;
     }
 
     public int getHour() {
@@ -385,8 +377,6 @@ public class CarParkModel extends AbstractModel implements Runnable {
         if (getDay().equals(friday) || getDay().equals(saturday)) {
             if (hour >= 18 && hour <= 20) {
                 return true;
-            } else {
-                return false;
             }
         } else if (getDay().equals(sunday)) {
             return hour >= 14 && hour <= 18;
