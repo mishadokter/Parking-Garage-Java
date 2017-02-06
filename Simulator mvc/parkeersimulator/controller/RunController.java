@@ -16,11 +16,12 @@ import java.util.Arrays;
 
 public class RunController extends AbstractController implements ActionListener {
 
-    private JButton stepDay, stepWeek, startSteps, stopSteps, settings, guiButton, resetButton;
+    private JButton stepDay, stepWeek, startSteps, stopSteps, pie, bar, guiButton, resetButton;
     private JFrame simFrame;
     private CarParkGui gui;
     private ArrayList<JButton> buttons;
     private PieChart chart;
+    private BarChart chart2;
 
     public RunController(CarParkModel model, JFrame simFrame) {
         super(model);
@@ -30,7 +31,8 @@ public class RunController extends AbstractController implements ActionListener 
         stepWeek = new JButton("Week");
         startSteps = new JButton("Start");
         stopSteps = new JButton("Stop");
-        settings = new JButton("Management");
+        pie = new JButton("Pie chart");
+        bar = new JButton("Bar graph");
 
         guiButton = new JButton("Settings");
         resetButton = new JButton("Reset");
@@ -42,7 +44,7 @@ public class RunController extends AbstractController implements ActionListener 
 
         // Loop om dezelfde style mee te geven aan alle buttons.
         int spacing = 1;
-        for (JButton b : Arrays.asList(stepDay, stepWeek, startSteps, stopSteps, settings, guiButton, resetButton)) {
+        for (JButton b : Arrays.asList(stepDay, stepWeek, startSteps, stopSteps, pie, bar, guiButton, resetButton)) {
             b.setBackground(new Color(59, 89, 182));
             b.setForeground(Color.WHITE);
             b.setFocusPainted(false);
@@ -108,7 +110,7 @@ public class RunController extends AbstractController implements ActionListener 
             gui.openGui();
         }
 
-        if (e.getSource() == settings) {
+        if (e.getSource() == pie) {
             if (chart != null) {
                 chart.dispose();
             }
@@ -117,10 +119,15 @@ public class RunController extends AbstractController implements ActionListener 
             RefineryUtilities.centerFrameOnScreen(chart);
             chart.setVisible(true);
 
-            BarChart chart = new BarChart("Total cars", "Garage statistics", model);
-            chart.pack();
-            RefineryUtilities.centerFrameOnScreen(chart);
-            chart.setVisible(true);
+        }
+        if (e.getSource() == bar) {
+            if (chart2 != null) {
+                chart2.dispose();
+            }
+            chart2 = new BarChart("Total cars", "Garage statistics", model);
+            chart2.pack();
+            RefineryUtilities.centerFrameOnScreen(chart2);
+            chart2.setVisible(true);
         }
 
         if (e.getSource() == stopSteps) {
