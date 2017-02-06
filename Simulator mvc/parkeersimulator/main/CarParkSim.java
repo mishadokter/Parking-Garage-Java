@@ -1,5 +1,6 @@
 package parkeersimulator.main;
 
+import org.jfree.ui.RefineryUtilities;
 import parkeersimulator.controller.AbstractController;
 import parkeersimulator.controller.CarParkGui;
 import parkeersimulator.controller.RunController;
@@ -59,6 +60,9 @@ public class CarParkSim implements PropertyChangeListener {
         captionView = new CaptionView(carParkModel);
         statView = new StatsView(carParkModel);
         createUI();
+    }
+
+    public void createCharts() {
     }
 
 

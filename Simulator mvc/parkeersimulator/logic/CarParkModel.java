@@ -65,7 +65,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
         modelConfig();
     }
 
-    public void modelConfig(){
+    public void modelConfig() {
         modelSettings = new HashMap<>();
         modelStats = new TreeMap<>();
         entranceCarQueue = new CarQueue();
@@ -145,28 +145,21 @@ public class CarParkModel extends AbstractModel implements Runnable {
         String dayName = null;
         switch (day) {
             case 0:
-                dayName = "Monday";
-                break;
+                return "Monday";
             case 1:
-                dayName = "Tuesday";
-                break;
+                return "Tuesday";
             case 2:
-                dayName = "Woensdag";
-                break;
+                return "Wednesday";
             case 3:
-                dayName = "Thursday";
-                break;
+                return "Thursday";
             case 4:
-                dayName = "Friday";
-                break;
+                return "Friday";
             case 5:
-                dayName = "Saturday";
-                break;
+                return "Saturday";
             case 6:
-                dayName = "Sunday";
-                break;
+                return "Sunday";
         }
-        return dayName;
+        return "";
     }
 
     public int getHour() {
@@ -482,9 +475,9 @@ public class CarParkModel extends AbstractModel implements Runnable {
     }
 
 
-
     /**
      * Gets the number of floors in the car park.
+     *
      * @return The number of floors in the car park.
      */
     public int getNumberOfFloors() {
@@ -493,6 +486,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     /**
      * Gets the number of rows in the car park on each floor.
+     *
      * @return The number of rows in the car park on each floor.
      */
     public int getNumberOfRows() {
@@ -501,6 +495,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     /**
      * Gets the number of places in the car park on each row.
+     *
      * @return The number of places in the car park on each row.
      */
     public int getNumberOfPlaces() {
@@ -509,6 +504,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     /**
      * Gets the number of open spots in the car park.
+     *
      * @return The number of open spots in the car park.
      */
     private int getNumberOfOpenSpots() {
@@ -585,6 +581,14 @@ public class CarParkModel extends AbstractModel implements Runnable {
             return true;
         }
         return false;
+    }
+
+    public int getTotal() {
+        return cars.length;
+    }
+
+    public int getOpenSpots() {
+        return numberOfOpenSpots;
     }
 
     /**
@@ -716,6 +720,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
 
     /**
      * Check if the given location is a valid location in the car park.
+     *
      * @param location The location to check.
      * @return If it is valid or not. ( true / false )
      */
