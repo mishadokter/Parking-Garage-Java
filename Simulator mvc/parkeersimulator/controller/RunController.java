@@ -25,9 +25,6 @@ public class RunController extends AbstractController implements ActionListener 
         super(model);
         this.simFrame = simFrame;
         gui = new CarParkGui(model, true);
-        chart = new PieChart_AWT("Total cars", model);
-        chart.setSize(560, 367);
-        RefineryUtilities.centerFrameOnScreen(chart);
         stepDay = new JButton("Day");
         stepWeek = new JButton("Week");
         startSteps = new JButton("Start");
@@ -110,6 +107,12 @@ public class RunController extends AbstractController implements ActionListener 
         }
 
         if (e.getSource() == settings) {
+            if (chart != null) {
+                chart.dispose();
+            }
+            chart = new PieChart_AWT("Total cars", model);
+            chart.setSize(560, 367);
+            RefineryUtilities.centerFrameOnScreen(chart);
             chart.setVisible(true);
         }
 

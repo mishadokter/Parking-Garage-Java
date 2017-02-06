@@ -13,6 +13,7 @@ public abstract class Car {
 
     /**
      * Gets the location of a car.
+     *
      * @return The location of a car.
      */
     public Location getLocation() {
@@ -21,6 +22,7 @@ public abstract class Car {
 
     /**
      * Sets the location of a car.
+     *
      * @param location The location a car needs to set.
      */
     public void setLocation(Location location) {
@@ -29,6 +31,7 @@ public abstract class Car {
 
     /**
      * Gets the amount of minutes a car stays at the carpark.
+     *
      * @return The amount of minutes a car stays at the carpark.
      */
     public int getMinutesLeft() {
@@ -37,23 +40,24 @@ public abstract class Car {
 
     /**
      * Sets the amount of minutes a car stays at the carpark.
+     *
      * @param minutesLeft The amount of minutes a car stays at the carpark.
      */
     public void setMinutesLeft(int minutesLeft) {
         this.minutesLeft = minutesLeft;
     }
 
+    public int getTotalMinutes() {
+        return totalMinutes;
+    }
 
     public void setTotalMinutes(int minutes) {
         totalMinutes = minutes;
     }
 
-    public int getTotalMinutes() {
-        return totalMinutes;
-    }
-
     /**
      * Gets wheter a car is paying.
+     *
      * @return If a car is paying.
      */
     public boolean getIsPaying() {
@@ -62,6 +66,7 @@ public abstract class Car {
 
     /**
      * Sets if a car is paying.
+     *
      * @param isPaying If a car is paying.
      */
     public void setIsPaying(boolean isPaying) {
@@ -70,6 +75,7 @@ public abstract class Car {
 
     /**
      * Gets if a car has to pay.
+     *
      * @return If a car has to pay.
      */
     public boolean getHasToPay() {
@@ -78,6 +84,7 @@ public abstract class Car {
 
     /**
      * Sets if a car has to pay.
+     *
      * @param hasToPay If a car has to pay.
      */
     public void setHasToPay(boolean hasToPay) {
@@ -93,6 +100,7 @@ public abstract class Car {
 
     /**
      * Gets the state of a car.
+     *
      * @return The state of a car.
      */
     public int getState() {
@@ -101,6 +109,5 @@ public abstract class Car {
 
     public void setState(int state) {
         this.state = state;
-        System.out.println("# State is: " + state);
     }
 }

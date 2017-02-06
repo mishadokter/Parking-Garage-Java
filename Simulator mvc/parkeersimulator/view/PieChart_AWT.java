@@ -39,8 +39,9 @@ public class PieChart_AWT extends ApplicationFrame {
 
     private PieDataset createDataset() {
         DefaultPieDataset dataset = new DefaultPieDataset();
-        dataset.setValue("AdHoc", new Double(model.getTotal()));
-        dataset.setValue("Pass", new Double(model.getOpenSpots()));
+        dataset.setValue("AdHoc", new Double(model.getAdHoc()));
+        dataset.setValue("Empty", new Double(model.getEmpty()));
+        dataset.setValue("Pass", new Double(model.getPass()));
         return dataset;
     }
 

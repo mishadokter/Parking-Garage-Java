@@ -333,7 +333,7 @@ public class CarParkModel extends AbstractModel implements Runnable {
             if (car.getHasToPay()) {
                 car.setIsPaying(true);
                 paymentCarQueue.addCar(car);
-                System.out.println("## Time left: " + car.getTotalMinutes() + " ## ");
+                //System.out.println("## Time left: " + car.getTotalMinutes() + " ## ");
 
             } else {
                 carLeavesSpot(car);
@@ -583,12 +583,16 @@ public class CarParkModel extends AbstractModel implements Runnable {
         return false;
     }
 
-    public int getTotal() {
-        return cars.length;
+    public int getAdHoc() {
+        return garage.getAdhoc();
     }
 
-    public int getOpenSpots() {
-        return numberOfOpenSpots;
+    public int getEmpty() {
+        return garage.getEmpty();
+    }
+
+    public int getPass() {
+        return garage.getPass();
     }
 
     /**
