@@ -3,7 +3,8 @@ package parkeersimulator.controller;
 import org.jfree.ui.RefineryUtilities;
 import parkeersimulator.logic.CarParkModel;
 import parkeersimulator.main.CarParkSim;
-import parkeersimulator.view.PieChart_AWT;
+import parkeersimulator.view.BarChart;
+import parkeersimulator.view.PieChart;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +20,7 @@ public class RunController extends AbstractController implements ActionListener 
     private JFrame simFrame;
     private CarParkGui gui;
     private ArrayList<JButton> buttons;
-    private PieChart_AWT chart;
+    private PieChart chart;
 
     public RunController(CarParkModel model, JFrame simFrame) {
         super(model);
@@ -30,6 +31,7 @@ public class RunController extends AbstractController implements ActionListener 
         startSteps = new JButton("Start");
         stopSteps = new JButton("Stop");
         settings = new JButton("Management");
+
         guiButton = new JButton("Settings");
         resetButton = new JButton("Reset");
 
@@ -110,8 +112,13 @@ public class RunController extends AbstractController implements ActionListener 
             if (chart != null) {
                 chart.dispose();
             }
-            chart = new PieChart_AWT("Total cars", model);
+            chart = new PieChart("Total cars", model);
             chart.setSize(560, 367);
+            RefineryUtilities.centerFrameOnScreen(chart);
+            chart.setVisible(true);
+
+            BarChart chart = new BarChart("Total cars", "Garage statistics", model);
+            chart.pack();
             RefineryUtilities.centerFrameOnScreen(chart);
             chart.setVisible(true);
         }

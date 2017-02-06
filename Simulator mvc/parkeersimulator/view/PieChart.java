@@ -17,14 +17,14 @@ import java.awt.event.WindowEvent;
 import java.util.Iterator;
 
 
-public class PieChart_AWT extends ApplicationFrame {
+public class PieChart extends ApplicationFrame {
     CarParkModel model;
     Thread thread;
     Boolean open;
     PiePlot piePlot;
     DefaultPieDataset dataset = new DefaultPieDataset();
 
-    public PieChart_AWT(String title, CarParkModel model) {
+    public PieChart(String title, CarParkModel model) {
         super(title);
         this.model = model;
         open = true;
@@ -52,7 +52,7 @@ public class PieChart_AWT extends ApplicationFrame {
 
     private JFreeChart createChart(PieDataset dataset) {
         JFreeChart chart = ChartFactory.createPieChart(
-                "Total cars",  // chart title
+                "Garage statistics",  // chart title
                 dataset,        // data
                 true,           // include legend
                 true,
@@ -74,10 +74,6 @@ public class PieChart_AWT extends ApplicationFrame {
         dataset.setValue("OpenPassPlace: " + model.getPassPlace(), new Double(model.getPassPlace()));
         dataset.setValue("BadParker: " + model.getBad(), new Double(model.getBad()));
         return dataset;
-    }
-
-    private void setColors(DefaultPieDataset dataset) {
-
     }
 
     @Override
