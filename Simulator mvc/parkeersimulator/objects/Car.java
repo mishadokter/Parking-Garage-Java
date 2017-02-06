@@ -44,6 +44,10 @@ public abstract class Car {
     }
 
 
+    public void setTotalMinutes(int minutes) {
+        totalMinutes = minutes;
+    }
+
     public int getTotalMinutes() {
         return totalMinutes;
     }

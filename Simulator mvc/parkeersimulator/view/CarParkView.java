@@ -15,7 +15,6 @@ public class CarParkView extends AbstractView {
     private Dimension size;
     private Image carParkImage;
     private BufferedImage adhoc, pass, empty, passPlace, badParker, badParker2, resCar, image;
-    private String imageString;
 
     /**
      * Constructor for objects of class CarPark
@@ -27,7 +26,6 @@ public class CarParkView extends AbstractView {
         size = new Dimension(0, 0);
         loadImages();
         image = empty;
-        imageString = "empty";
     }
 
     /**
@@ -74,35 +72,27 @@ public class CarParkView extends AbstractView {
                     switch (state) {
                         case 0:
                             image = empty;
-                            imageString = "empty";
                             break;
                         case 1:
                             image = adhoc;
-                            imageString = "adhoc";
                             break;
                         case 2:
                             image = pass;
-                            imageString = "pass";
                             break;
                         case 5:
                             image = passPlace;
-                            imageString = "passPlace";
                             break;
                         case 6:
                             image = badParker;
-                            imageString = "badParker";
                             break;
                         case 7:
                             image = badParker2;
-                            imageString = "badParker2";
                             break;
                         case 8:
                             image = resCar;
-                            imageString = "resCar";
                             break;
                         default:
                             image = empty;
-                            imageString = "empty";
                     }
                     doDrawing(graphics, location);
                 }
@@ -118,11 +108,10 @@ public class CarParkView extends AbstractView {
      **/
     private void doDrawing(Graphics g, Location location) {
         if ((location.getRow() + 2) % 2 == 0) {
-            if (imageString.equals("badParker2")) {
-                image = badParker;
-            }
-            if (imageString.equals("badParker")) {
+            if (image == badParker) {
                 image = badParker2;
+            } else if (image == badParker2) {
+                image = badParker;
             }
             AffineTransform tx = AffineTransform.getScaleInstance(-1, -1);
             tx.translate(-image.getWidth(null), -image.getHeight(null));
@@ -141,13 +130,13 @@ public class CarParkView extends AbstractView {
      */
     private void loadImages() {
         try {
-            adhoc = ImageIO.read(getClass().getResource("resources/AdHocCar.png"));
-            pass = ImageIO.read(getClass().getResource("resources/PassCar.png"));
-            empty = ImageIO.read(getClass().getResource("resources/Empty.png"));
-            passPlace = ImageIO.read(getClass().getResource("resources/PassPlace.png"));
-            badParker = ImageIO.read(getClass().getResource("resources/BadParker.png"));
-            badParker2 = ImageIO.read(getClass().getResource("resources/BadParker2.png"));
-            resCar = ImageIO.read(getClass().getResource("resources/ResCar.png"));
+            adhoc = ImageIO.read(getClass().getResource("resources/cars/adhoccar.png"));
+            pass = ImageIO.read(getClass().getResource("resources/cars/passcar.png"));
+            empty = ImageIO.read(getClass().getResource("resources/cars/empty.png"));
+            passPlace = ImageIO.read(getClass().getResource("resources/cars/passplace.png"));
+            badParker = ImageIO.read(getClass().getResource("resources/cars/badparker.png"));
+            badParker2 = ImageIO.read(getClass().getResource("resources/cars/badparker2.png"));
+            resCar = ImageIO.read(getClass().getResource("resources/cars/rescar.png"));
         } catch (IOException ex) {
         }
     }
