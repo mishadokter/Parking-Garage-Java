@@ -8,7 +8,6 @@ import parkeersimulator.view.*;
 
 import javax.swing.*;
 import javax.swing.plaf.LayerUI;
-import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 

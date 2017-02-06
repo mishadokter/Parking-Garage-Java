@@ -10,12 +10,12 @@ root {
      -fx-background-image: url("../../view/resources/management.png");
 }
 
-.label {
+/*.label {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-text-fill: #333333;
     -fx-effect: dropshadow( gaussian , rgba(255,255,255,0.5) , 0,0,0,1 );
-}
+}*/
 
 .barchart {
     display: none;
@@ -47,3 +47,22 @@ root {
     -fx-background-color: linear-gradient(#2A5058, #61a2b1);
     -fx-cursor: hand;
 }
+
+/* Voor de stat view, transparent background */
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+.chart-vertical-grid-lines {
+    -fx-stroke: #3278fa;
+}
+.chart-horizontal-grid-lines {
+    -fx-stroke: #3278fa;
+}
+.chart-alternative-row-fill {
+    -fx-fill: transparent;
+    -fx-stroke: transparent;
+    -fx-stroke-width: 0;
+}
+
+/* Voor color van de bar */
+.default-color0.chart-bar { -fx-bar-fill: #0B615E; }
