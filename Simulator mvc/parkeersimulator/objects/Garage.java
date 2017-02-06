@@ -11,11 +11,9 @@ public class Garage {
     private int numberOfFloors;
     private int numberOfRows;
     private int numberOfPlaces;
-    private CarParkModel model;
 
     public Garage(CarParkModel model) {
         state = new LinkedHashMap<>();
-        this.model = model;
         numberOfFloors = model.getNumberOfFloors();
         numberOfRows = model.getNumberOfRows();
         numberOfPlaces = model.getNumberOfPlaces();
